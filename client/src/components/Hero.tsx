@@ -5,15 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Search } from 'lucide-react';
 import { useLocation } from 'wouter';
 
-const cities = [
-  'Doha',
-  'Al Rayyan',
-  'Al Wakrah',
-  'Umm Salal',
-  'Al Daayen',
-  'Lusail',
-  'West Bay',
-];
+// Cities will be fetched from database via API
 
 export default function Hero() {
   const [, setLocation] = useLocation();
@@ -22,6 +14,10 @@ export default function Hero() {
 
   const { data: categories } = useQuery({
     queryKey: ['/api/categories/active'],
+  });
+
+  const { data: cities } = useQuery({
+    queryKey: ['/api/cities'],
   });
 
   const handleSearch = () => {
@@ -55,11 +51,11 @@ export default function Hero() {
                     <SelectValue placeholder="Choose your city" />
                   </SelectTrigger>
                   <SelectContent>
-                    {cities.map((city) => (
-                      <SelectItem key={city} value={city}>
-                        {city}
+                    {cities?.map((city: any) => (
+                      <SelectItem key={city.id} value={city.name}>
+                        {city.name}
                       </SelectItem>
-                    ))}
+                    )) || []}
                   </SelectContent>
                 </Select>
               </div>

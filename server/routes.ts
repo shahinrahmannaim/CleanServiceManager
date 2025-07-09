@@ -149,6 +149,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Cities routes
+  app.get("/api/cities", async (req, res) => {
+    try {
+      const cities = [
+        { id: 1, name: 'Doha' },
+        { id: 2, name: 'Al Rayyan' },
+        { id: 3, name: 'Al Wakrah' },
+        { id: 4, name: 'Umm Salal' },
+        { id: 5, name: 'Al Daayen' },
+        { id: 6, name: 'Lusail' },
+        { id: 7, name: 'West Bay' }
+      ];
+      res.json(cities);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch cities" });
+    }
+  });
+
   app.get("/api/categories/active", async (req, res) => {
     try {
       const categories = await storage.getActiveCategories();
@@ -219,6 +237,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Popular services error:", error);
       res.status(500).json({ message: "Failed to fetch popular services" });
+    }
+  });
+
+  // Testimonials routes
+  app.get("/api/testimonials", async (req, res) => {
+    try {
+      const testimonials = [
+        {
+          id: 1,
+          name: "Ahmed Al-Rashid",
+          location: "Doha, Qatar",
+          rating: 5,
+          comment: "Excellent service! The team was professional, punctual, and did an amazing job cleaning our villa. Highly recommend!"
+        },
+        {
+          id: 2,
+          name: "Sarah Johnson",
+          location: "Al Rayyan, Qatar",
+          rating: 5,
+          comment: "Perfect AC cleaning service! They were thorough and my AC is working better than ever. Great value for money."
+        },
+        {
+          id: 3,
+          name: "Mohammed Al-Thani",
+          location: "West Bay, Qatar",
+          rating: 5,
+          comment: "Outstanding office cleaning service! Our workspace has never looked better. Professional and reliable team."
+        }
+      ];
+      res.json(testimonials);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch testimonials" });
+    }
+  });
+
+  // Stats routes
+  app.get("/api/stats", async (req, res) => {
+    try {
+      const stats = [
+        { value: "5000+", label: "Happy Customers" },
+        { value: "500+", label: "Services Completed" },
+        { value: "50+", label: "Professional Cleaners" },
+        { value: "4.9", label: "Average Rating" }
+      ];
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch stats" });
     }
   });
 

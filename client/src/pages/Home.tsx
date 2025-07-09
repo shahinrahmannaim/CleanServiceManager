@@ -43,33 +43,15 @@ export default function Home() {
     }
   ];
 
-  const testimonials = [
-    {
-      name: "Ahmed Al-Rashid",
-      location: "Doha, Qatar",
-      rating: 5,
-      comment: "Excellent service! The team was professional, punctual, and did an amazing job cleaning our villa. Highly recommend!"
-    },
-    {
-      name: "Sarah Johnson",
-      location: "Al Rayyan, Qatar",
-      rating: 5,
-      comment: "Perfect AC cleaning service! They were thorough and my AC is working better than ever. Great value for money."
-    },
-    {
-      name: "Mohammed Al-Thani",
-      location: "West Bay, Qatar",
-      rating: 5,
-      comment: "Outstanding office cleaning service! Our workspace has never looked better. Professional and reliable team."
-    }
-  ];
+  const { data: testimonials } = useQuery({
+    queryKey: ['/api/testimonials'],
+    staleTime: 60 * 60 * 1000, // 1 hour
+  });
 
-  const stats = [
-    { value: "5000+", label: "Happy Customers" },
-    { value: "500+", label: "Services Completed" },
-    { value: "50+", label: "Professional Cleaners" },
-    { value: "4.9", label: "Average Rating" }
-  ];
+  const { data: stats } = useQuery({
+    queryKey: ['/api/stats'],
+    staleTime: 60 * 60 * 1000, // 1 hour
+  });
 
   return (
     <div className="min-h-screen">
@@ -94,22 +76,7 @@ export default function Home() {
                   <h3 className="text-2xl font-bold mb-2">{promo.title}</h3>
                   <p className="text-red-100">{promo.description}</p>
                 </div>
-              )) || (
-                <>
-                  <div className="promotional-card gradient-accent">
-                    <h3 className="text-2xl font-bold mb-2">25% Off First Booking</h3>
-                    <p className="text-red-100">New customers enjoy special discount</p>
-                  </div>
-                  <div className="promotional-card gradient-primary">
-                    <h3 className="text-2xl font-bold mb-2">Same Day Service</h3>
-                    <p className="text-blue-100">Book before 12 PM for same-day cleaning</p>
-                  </div>
-                  <div className="promotional-card bg-gradient-to-r from-green-500 to-green-600">
-                    <h3 className="text-2xl font-bold mb-2">Satisfaction Guaranteed</h3>
-                    <p className="text-green-100">100% satisfaction or money back</p>
-                  </div>
-                </>
-              )}
+              )) || <div className="text-center text-gray-500">No promotions available</div>}
             </div>
           )}
         </div>
@@ -184,12 +151,12 @@ export default function Home() {
       <section className="py-16 gradient-primary text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat) => (
+            {stats?.map((stat: any) => (
               <div key={stat.label} className="text-center">
                 <div className="text-4xl md:text-5xl font-bold mb-2">{stat.value}</div>
                 <div className="text-blue-100">{stat.label}</div>
               </div>
-            ))}
+            )) || []}
           </div>
         </div>
       </section>
@@ -205,7 +172,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial) => (
+            {testimonials?.map((testimonial: any) => (
               <Card key={testimonial.name} className="shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
@@ -228,7 +195,7 @@ export default function Home() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )) || []}
           </div>
         </div>
       </section>

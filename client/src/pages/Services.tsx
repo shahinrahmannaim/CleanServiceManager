@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Search, Filter, MapPin } from 'lucide-react';
 
-const cities = ['Doha', 'Al Rayyan', 'Al Wakrah', 'Umm Salal', 'Al Daayen', 'Lusail', 'West Bay'];
+// Cities will be fetched from database via API
 
 export default function Services() {
   const [location] = useLocation();
@@ -47,6 +47,10 @@ export default function Services() {
   const { data: cartItems } = useQuery({
     queryKey: ['/api/cart'],
     select: (data) => data?.map((item: any) => item.serviceId) || [],
+  });
+
+  const { data: cities } = useQuery({
+    queryKey: ['/api/cities'],
   });
 
   const handleSearch = () => {
@@ -111,11 +115,11 @@ export default function Services() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">All Cities</SelectItem>
-                  {cities.map((city) => (
-                    <SelectItem key={city} value={city}>
-                      {city}
+                  {cities?.map((city: any) => (
+                    <SelectItem key={city.id} value={city.name}>
+                      {city.name}
                     </SelectItem>
-                  ))}
+                  )) || []}
                 </SelectContent>
               </Select>
 

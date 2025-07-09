@@ -1,0 +1,134 @@
+	✅ No static/dummy frontend data – all categories, services, bookings must come from the database
+	•	✅ Clean UI layout (with navbar, category bar, hero section)
+	•	✅ Full authentication, security, and real-time user data management
+	•	✅ Clean backend + frontend with real DB seeding (via Prisma)
+
+⸻
+
+✅ Final Replit Prompt: Panaroma Cleaning Services Platform
+
+You’re building a secure, full-stack cleaning services platform on Replit, using:
+	•	Frontend: React + React Router DOM + Tailwind CSS + React Hook Form + Yup or Zod
+	•	Backend: Node.js + Express + Prisma ORM + PostgreSQL
+	•	Authentication: JWT + HTTP-only cookies + bcrypt
+	•	
+
+⸻
+
+🌐 Project Requirements
+
+🔒 Authentication
+
+🔐 Registration
+	•	Form fields:
+	•	name, email, mobile, password, confirmPassword, role (user | service provider)
+	•	Validation (frontend + backend):
+	•	Trim all inputs
+	•	Block SQL keywords, HTML/script tags, JS expressions like eval()
+	•	Name: only letters, numbers, spaces
+	•	Password: min 8 chars, uppercase, lowercase, number, symbol, must match confirm
+	•	Email must be valid format
+	•	If role = service provider: set isVerified: false (pending admin approval)
+	•	No frontend dummy data: registration data saved in DB
+
+🔑 Login
+	•	Form: email, password, rememberMe
+	•	If rememberMe is checked → 7-day JWT cookie
+	•	If not → session-only cookie
+	•	Forgot password flow:
+	•	Email input → send 6-digit OTP
+	•	Route: POST /api/auth/request-reset, then POST /api/auth/reset
+
+⸻
+
+👤 User Profile Page
+	•	Show/update:
+	•	name, mobile, password (old+new), addresses[]
+	•	Use same validation as registration
+	•	Update via API, not dummy frontend states
+
+⸻
+
+🧹 Bookings Management
+	•	From database (no static arrays)
+	•	Show:
+	•	Past bookings: completed/cancelled
+	•	Future bookings: cancel or reschedule
+	•	API:
+	•	GET /api/bookings/user-history
+	•	GET /api/bookings/future
+	•	PATCH /api/bookings/cancel/:id
+	•	PUT /api/bookings/update/:id
+
+⸻
+
+🏠 Address CRUD
+	•	Allow users to add/update/delete/set-default address
+	•	API:
+	•	GET /api/addresses
+	•	POST /api/addresses
+	•	PUT /api/addresses/:id
+	•	DELETE /api/addresses/:id
+
+⸻
+
+🔐 Security Rules
+	•	Backend input validation:
+	•	Disallow <script>, SQL keywords, suspicious patterns
+	•	Use bcrypt to hash passwords
+	•	Use JWT in HTTP-only cookies
+	•	Protect all routes with JWT + role-based access middleware
+
+⸻
+
+🖼️ UI Layout Requirements
+
+1. Navbar
+	•	Contains:
+	•	Logo (Panaroma)
+	•	All Services dropdown (dynamic from DB)
+	•	User menu (Login / Register / Profile / Logout)
+	•	Cart icon
+	•	Favorite icon
+
+2. Category Navbar (Below Main Navbar)
+	•	Fetch categories from DB (GET /api/categories)
+	•	Display:
+	•	Circular icon/image
+	•	Category name
+	•	Click = navigate to /services/:categoryName
+
+3. Hero Section
+	•	Full-screen background image (cleaning photo)
+	•	Overlay:
+	•	Headline text: “Clean Spaces, Happy Lives”
+	•	City dropdown selector (from DB)
+	•	Search input
+	•	“Find My Cleaner” button
+
+⸻
+
+💻 Frontend Stack
+	•	react-router-dom for routing
+	•	react-hook-form for forms
+	•	yup or zod for validation
+	•	axios with { withCredentials: true } for API
+	•	Dynamic UI (no hardcoded service or category list)
+
+⸻
+
+🔁 Backend Stack
+	•	express server
+	•	prisma ORM
+	•	postgresql DB
+	•	cookie-parser for secure token storage
+	•	All routes secured by JWT middleware
+	•	DB seeding:
+	•	Insert categories and services via prisma/seed.js
+
+⸻
+
+✅ NO DUMMY FRONTEND DATA
+	•	All services, categories, bookings, addresses, users:
+	•	Must be fetched from real database via API
+	•	No hardcoded lists, dropdowns, cards, etc.

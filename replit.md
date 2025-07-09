@@ -8,6 +8,24 @@ Panaroma is a full-stack cleaning services platform that connects customers with
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### July 9, 2025
+- **✅ Eliminated all static/dummy frontend data**: All categories, services, cities, testimonials, and stats now come from database APIs
+- **✅ Fixed booking creation system**: Auto-calculates total amount from service price, handles database constraints correctly
+- **✅ Implemented search functionality**: Database-based service search with category and location filters
+- **✅ Added new API endpoints**: `/api/cities`, `/api/testimonials`, `/api/stats` for dynamic data
+- **✅ WebSocket chatbot assignment**: Bookings automatically assigned to employees with real-time status updates
+- **✅ Comprehensive testing completed**: All authentication, CRUD operations, booking flow, and role-based access verified working
+- **✅ Database fully populated**: Users with different roles, services, categories, and test bookings in place
+
+### Current Status
+- **Core Platform**: Fully functional with JWT authentication, role-based access, and database-driven content
+- **Booking System**: Complete booking flow with automatic employee assignment via WebSocket chatbot
+- **API Coverage**: All CRUD operations implemented and tested for services, categories, bookings, favorites, cart
+- **Frontend**: Dynamic data loading from APIs, no hardcoded content, responsive design
+- **Remaining**: Email service needs SMTP configuration, time logs/invoices schema fixes, ElasticSearch implementation
+
 ## System Architecture
 
 ### Frontend Architecture
