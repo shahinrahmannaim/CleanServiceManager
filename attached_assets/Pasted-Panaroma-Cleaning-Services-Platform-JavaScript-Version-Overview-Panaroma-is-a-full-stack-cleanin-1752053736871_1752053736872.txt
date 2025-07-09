@@ -1,0 +1,185 @@
+Panaroma Cleaning Services Platform (JavaScript Version)
+
+Overview
+
+Panaroma is a full-stack cleaning services platform built with a React (JavaScript) frontend and Node.js (Express) backend. The app connects customers with cleaning providers for booking, payments, and service management. PostgreSQL is used for structured data storage, Prisma is used as the ORM, and Elasticsearch powers the search functionality.
+
+Project structure:
+
+panaroma/
+├── backend/       # Node.js + Express backend (JavaScript + Prisma)
+└── frontend/      # React frontend (JavaScript, using React Router DOM)
+
+
+⸻
+
+Frontend Architecture (React - JavaScript)
+	•	Framework: React 18 (JavaScript)
+	•	Routing: React Router DOM (with protected routes)
+	•	State Management: React Query (TanStack Query)
+	•	Styling: Tailwind CSS
+	•	Form Handling: React Hook Form + Yup
+	•	Auth: JWT-based, stored in HTTP-only cookies
+	•	Build Tool: Vite
+
+UI/UX Layout
+	•	Navbar: Logo, “All Services”, User Icon dropdown (Login/Join Us)
+	•	Login/Register → modal popup
+	•	Hero Section: Clean UI with city selection dropdown and search button
+	•	Promo Section: Promotional banners managed via backend CRUD
+	•	Service Section: Categorized services (e.g. AC Cleaning, Home Cleaning)
+	•	Favorites & Cart: Users can like services and add to cart for later payment
+	•	Footer: Professional with links, contact, and social icons
+
+Pages & Features
+	•	Public Routes:
+	•	/ → Home
+	•	/login, /register
+	•	/services, /services/:id
+	•	Protected Routes:
+	•	/profile, /bookings, /favorites, /cart
+	•	/admin/* → Only for admin/superadmin roles
+	•	Components:
+	•	Navbar, Footer, ProtectedRoute wrapper
+	•	BookingForm, ServiceCard, AdminPanel
+	•	FavoriteButton, CartView
+
+Routing Example (React Router DOM)
+
+<Route path="/admin" element={<ProtectedRoute roles={["admin", "superadmin"]}><AdminDashboard /></ProtectedRoute>} />
+
+
+⸻
+
+Backend Architecture (Node.js + Express - JavaScript)
+	•	Runtime: Node.js (JavaScript)
+	•	Framework: Express.js
+	•	Database ORM: Prisma ORM (JavaScript)
+	•	Authentication:
+	•	JWT (sign, verify)
+	•	Bcrypt for password hashing
+	•	Secure cookies (HTTP-only) for sessions
+	•	Email and mobile OTP implementation for registration/login
+	•	Session Management: PostgreSQL session store
+	•	Search Engine: Elasticsearch integrated for both user and admin panels
+	•	API Routes:
+	•	/api/auth → login, register, logout (email/OTP)
+	•	/api/users → user profile, role management, service provider verification
+	•	/api/services → CRUD operations by category
+	•	/api/bookings → booking handling
+	•	/api/payments → payment status handling
+	•	/api/promotions → CRUD for promo banners
+	•	/api/employees → employee management, time tracking, invoices
+	•	/api/categories → CRUD for service categories
+	•	/api/favorites → like/unlike services
+	•	/api/cart → add/remove services before booking/payment
+
+⸻
+
+Roles & Permissions
+	•	user: Book services, manage profile, add to favorites/cart
+	•	employee: View assigned bookings, track time, generate invoice
+	•	admin: Manage services, users, bookings, providers, categories, employees
+	•	superadmin: Full access including system settings and service provider approvals
+
+⸻
+
+Database (PostgreSQL + Prisma)
+	•	Tables:
+	•	User: id, name, email, mobile, password, role, isVerifiedProvider
+	•	Service: name, categoryId, price, duration, image, status
+	•	Booking: userId, serviceId, employeeId, address, status
+	•	Payment: bookingId, status
+	•	Promotion: title, image, description
+	•	Category: name, description
+	•	Favorite: userId, serviceId
+	•	Cart: userId, serviceId
+	•	EmployeeTimeLog: employeeId, bookingId, startTime, endTime
+	•	Invoice: bookingId, employeeId, totalAmount, status
+
+⸻
+
+Registration Flow
+	•	User can register as a customer or a service provider
+	•	Service providers must be approved by admin before activation
+	•	Email/mobile OTP verification required for all users
+
+⸻
+
+Admin Panel Features
+	•	Dashboard with analytics
+	•	CRUD:
+	•	Users
+	•	Services
+	•	Categories
+	•	Bookings
+	•	Promotions
+	•	Employees
+	•	Employee time tracking view
+	•	Service provider validation requests
+	•	Invoice creation per employee or specific cleaning services
+
+⸻
+
+Development Setup (Local)
+
+# Backend
+cd backend
+npm install
+cp .env.example .env
+npx prisma migrate dev
+npm run dev
+
+# Frontend
+cd frontend
+npm install
+npm run dev
+
+
+⸻
+
+Deployment
+	•	Dev: Localhost
+	•	Prod: Separate deployment (e.g. Vercel for frontend, Render for backend)
+
+⸻
+
+Features Summary
+	•	Auth: Role-based + OTP
+	•	Favorites: Add/remove liked services
+	•	Cart: Add services before booking/payment
+	•	Booking Flow: Clean and multi-step
+	•	Payment Tracking: Status per booking
+	•	Employee System:
+	•	Admin manages employees
+	•	Time tracker per service
+	•	Auto or manual invoice generation
+	•	Invoice System: One-click invoice creation for services or employees
+	•	Admin CRUD:
+	•	Categories
+	•	Services
+	•	Promotions
+
+⸻
+
+Brand & Localization
+	•	Colors: Dark blue & tomato red
+	•	Region: Qatar (Doha, Al Rayyan, etc.)
+	•	Currency: QAR
+	•	Map: Google Maps for provider locations
+
+⸻
+
+Changelog (Simplified)
+
+- July 9: Added Favorites, Cart, Invoice, Employee Time Tracking
+- July 9: Admin: Service provider approval, Employee management
+- July 8: Added OTP-based login/register + category CRUD
+- July 7: Hero with city selector and search
+- July 3: Admin dashboard and secure protected routes
+
+Future Plans
+	•	Stripe payment integration
+	•	Real-time chat
+	•	Auto-assign booking to employees
+	•	React Native app with the same features
