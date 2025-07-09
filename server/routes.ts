@@ -9,6 +9,7 @@ import { authenticate, authorize, AuthRequest } from "./middleware/auth";
 import { sendOtp, verifyOtp } from "./services/otpService";
 import { sendWelcomeEmail } from "./services/emailService";
 import { chatbotService } from "./services/chatbotService";
+import { searchService } from "./services/searchService";
 import { insertUserSchema, insertServiceSchema, insertBookingSchema, insertCategorySchema, insertPromotionSchema, insertPaymentMethodSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -187,13 +188,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Services routes
   app.get("/api/services", async (req, res) => {
     try {
-      const { category, search } = req.query;
+      const { category, search, city, minPrice, maxPrice } = req.query;
       
       let services;
       if (search) {
-        services = await storage.searchServices(search as string);
+        services = await searchService.searchServices(search as string, {
+          category: category as string,
+          city: city as string,
+          minPrice: minPrice ? parseFloat(minPrice as string) : undefined,
+          maxPrice: maxPrice ? parseFloat(maxPrice as string) : undefined,
+        });
       } else if (category) {
         services = await storage.getServicesByCategory(parseInt(category as string));
+      } else if (city) {
+        services = await searchService.getServicesByLocation(city as string);
       } else {
         services = await storage.getAllServices();
       }
@@ -201,6 +209,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(services);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch services" });
+    }
+  });
+  
+  app.get("/api/services/popular", async (req, res) => {
+    try {
+      const services = await searchService.getPopularServices();
+      res.json(services);
+    } catch (error) {
+      console.error("Popular services error:", error);
+      res.status(500).json({ message: "Failed to fetch popular services" });
     }
   });
 
@@ -262,16 +280,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/bookings", authenticate, async (req: AuthRequest, res) => {
     try {
-      const booking = await storage.createBooking({
-        ...req.body,
+      // Get service details to calculate total amount
+      const service = await storage.getService(req.body.serviceId);
+      if (!service) {
+        return res.status(404).json({ message: "Service not found" });
+      }
+
+      const bookingData = {
         userId: req.user.id,
-      });
+        serviceId: req.body.serviceId,
+        address: req.body.address,
+        city: req.body.city,
+        scheduledDate: new Date(req.body.scheduledDate),
+        totalAmount: service.price, // Use service price as total amount
+        notes: req.body.notes || null,
+      };
+
+      console.log("Creating booking with data:", bookingData);
+
+      const booking = await storage.createBooking(bookingData);
 
       // Trigger chatbot to assign employee
-      await chatbotService.assignBookingToEmployee(booking.id);
+      try {
+        await chatbotService.assignBookingToEmployee(booking.id);
+      } catch (error) {
+        console.error("Error assigning booking to employee:", error);
+      }
 
       res.status(201).json(booking);
     } catch (error) {
+      console.error("Booking creation error:", error);
       res.status(500).json({ message: "Failed to create booking" });
     }
   });
