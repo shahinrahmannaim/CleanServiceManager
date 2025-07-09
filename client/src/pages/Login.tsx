@@ -70,7 +70,7 @@ export default function Login({ onSuccess }: LoginProps) {
           <img 
             src="/logo.jpeg" 
             alt="Panaroma Cleaning Services" 
-            className="h-16 w-16 rounded-full object-cover"
+            className="h-20 w-20 rounded-full object-cover shadow-lg border-4 border-blue-100"
           />
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
