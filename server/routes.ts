@@ -43,8 +43,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isMobileVerified: false,
       });
 
-      // Send welcome email
-      await sendWelcomeEmail(email, name);
+      // Send welcome email (disabled for testing)
+      // await sendWelcomeEmail(email, name);
 
       res.status(201).json({ message: "User created successfully", userId: user.id });
     } catch (error) {
