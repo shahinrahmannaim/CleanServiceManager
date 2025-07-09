@@ -14,8 +14,6 @@ import {
   ArrowRight,
   Scissors,
   Zap,
-  Vacuum,
-  Spray,
   Wrench
 } from 'lucide-react';
 
@@ -26,7 +24,7 @@ const categoryIcons: { [key: string]: any } = {
   'Car Cleaning': Car,
   'Carpet Cleaning': Sofa,
   'Laundry Services': Shirt,
-  'Deep Cleaning': Spray,
+  'Deep Cleaning': Zap,
   'Window Cleaning': Sparkles,
   'Test Category': Wrench,
 };
