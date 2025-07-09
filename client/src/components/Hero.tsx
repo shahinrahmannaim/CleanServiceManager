@@ -32,13 +32,13 @@ export default function Hero() {
     <section 
       className="relative text-white py-20"
       style={{
-        backgroundImage: 'linear-gradient(135deg, hsl(225, 73%, 30%) 0%, hsl(225, 73%, 50%) 100%)',
+        backgroundImage: `linear-gradient(135deg, rgba(30, 64, 175, 0.8) 0%, rgba(59, 130, 246, 0.8) 100%), url('https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="absolute inset-0 bg-black/20"></div>
+      <div className="absolute inset-0 bg-black/30"></div>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-shadow fade-in">

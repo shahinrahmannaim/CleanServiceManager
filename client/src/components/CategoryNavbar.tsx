@@ -2,7 +2,28 @@ import { useQuery } from '@tanstack/react-query';
 import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronRight, Home } from 'lucide-react';
+import { 
+  ChevronRight, 
+  Home, 
+  Sparkles, 
+  Building2, 
+  Car, 
+  Sofa, 
+  Shirt, 
+  Droplets,
+  ArrowRight
+} from 'lucide-react';
+
+// Category icons mapping
+const categoryIcons: { [key: string]: any } = {
+  'House Cleaning': Home,
+  'Office Cleaning': Building2,
+  'Car Cleaning': Car,
+  'Carpet Cleaning': Sofa,
+  'Laundry Services': Shirt,
+  'Deep Cleaning': Droplets,
+  'Window Cleaning': Sparkles,
+};
 
 export default function CategoryNavbar() {
   const [location] = useLocation();
@@ -17,18 +38,18 @@ export default function CategoryNavbar() {
   }
 
   return (
-    <div className="bg-white border-b border-gray-200 shadow-sm">
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-12">
+        <div className="flex items-center justify-between h-14">
           {/* Breadcrumb */}
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <div className="flex items-center space-x-2 text-sm text-gray-700">
             <Link href="/">
-              <Button variant="ghost" size="sm" className="p-1 h-auto">
+              <Button variant="ghost" size="sm" className="p-2 h-auto hover:bg-blue-100">
                 <Home className="h-4 w-4" />
               </Button>
             </Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="capitalize">
+            <ChevronRight className="h-4 w-4 text-gray-400" />
+            <span className="capitalize font-medium">
               {location === '/' ? 'Home' : 
                location === '/services' ? 'Services' : 
                location === '/about' ? 'About' : 
@@ -37,37 +58,54 @@ export default function CategoryNavbar() {
             </span>
           </div>
 
-          {/* Category Pills */}
-          <div className="flex items-center space-x-2 overflow-x-auto">
+          {/* Category Pills with Icons */}
+          <div className="flex items-center space-x-3 overflow-x-auto">
             {isLoading ? (
               <div className="flex space-x-2">
                 {[1, 2, 3, 4].map((i) => (
                   <div
                     key={i}
-                    className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"
+                    className="h-8 w-24 bg-blue-200 rounded-full animate-pulse"
                   />
                 ))}
               </div>
             ) : (
-              <div className="flex space-x-2">
+              <div className="flex items-center space-x-2">
                 <Link href="/services">
                   <Badge 
                     variant={location === '/services' ? 'default' : 'secondary'}
-                    className="hover:bg-primary hover:text-white cursor-pointer transition-colors"
+                    className="flex items-center space-x-1 px-3 py-1.5 bg-white hover:bg-blue-600 hover:text-white cursor-pointer transition-all duration-200 shadow-sm border border-blue-200 text-blue-700 hover:border-blue-600"
                   >
-                    All Services
+                    <Sparkles className="h-3 w-3" />
+                    <span>All Services</span>
                   </Badge>
                 </Link>
-                {categories?.slice(0, 5).map((category: any) => (
-                  <Link key={category.id} href={`/services?category=${category.id}`}>
-                    <Badge 
-                      variant="secondary"
-                      className="hover:bg-primary hover:text-white cursor-pointer transition-colors"
-                    >
-                      {category.name}
-                    </Badge>
-                  </Link>
-                ))}
+                {categories?.slice(0, 4).map((category: any) => {
+                  const IconComponent = categoryIcons[category.name] || Sparkles;
+                  return (
+                    <Link key={category.id} href={`/services?category=${category.id}`}>
+                      <Badge 
+                        variant="secondary"
+                        className="flex items-center space-x-1 px-3 py-1.5 bg-white hover:bg-blue-600 hover:text-white cursor-pointer transition-all duration-200 shadow-sm border border-blue-200 text-blue-700 hover:border-blue-600"
+                      >
+                        <IconComponent className="h-3 w-3" />
+                        <span>{category.name}</span>
+                      </Badge>
+                    </Link>
+                  );
+                })}
+                
+                {/* View All Categories */}
+                <Link href="/services">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 hover:bg-blue-100 px-3 py-1.5"
+                  >
+                    <span className="text-sm">View All</span>
+                    <ArrowRight className="h-3 w-3" />
+                  </Button>
+                </Link>
               </div>
             )}
           </div>
