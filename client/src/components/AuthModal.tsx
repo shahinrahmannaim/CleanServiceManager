@@ -198,7 +198,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/logo.jpeg" 
+              alt="Panaroma Cleaning Services" 
+              className="h-16 w-16 rounded-full object-cover shadow-lg border-4 border-blue-100"
+            />
+          </div>
+          <DialogTitle className="text-center">
             {mode === 'login' && 'Login to Panaroma'}
             {mode === 'register' && 'Join Panaroma'}
             {mode === 'otp' && 'Enter OTP Code'}
