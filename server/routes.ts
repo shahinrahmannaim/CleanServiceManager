@@ -10,6 +10,7 @@ import { sendOtp, verifyOtp } from "./services/otpService";
 import { sendWelcomeEmail } from "./services/emailService";
 import { chatbotService } from "./services/chatbotService";
 import { searchService } from "./services/searchService";
+import { validateInput, secureUserRegistrationSchema, secureLoginSchema, secureBookingSchema, secureAddressSchema } from "./validation/inputValidation";
 import { insertUserSchema, insertServiceSchema, insertBookingSchema, insertCategorySchema, insertPromotionSchema, insertPaymentMethodSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -30,7 +31,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Hash password
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 12);
 
       // Create user
       const user = await storage.createUser({
@@ -576,6 +577,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(user);
     } catch (error) {
       res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  // User profile update endpoint
+  app.put("/api/users/profile", authenticate, async (req: AuthRequest, res) => {
+    try {
+      const { name, email, mobile, currentPassword, newPassword } = req.body;
+      
+      // Get current user
+      const user = await storage.getUser(req.user!.id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // If changing password, verify current password
+      if (newPassword && currentPassword) {
+        const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+        if (!isValidPassword) {
+          return res.status(400).json({ message: "Current password is incorrect" });
+        }
+      }
+
+      // Prepare update data
+      const updateData: any = { name, email, mobile };
+      
+      // Hash new password if provided
+      if (newPassword) {
+        updateData.password = await bcrypt.hash(newPassword, 12);
+      }
+
+      const updatedUser = await storage.updateUser(user.id, updateData);
+
+      res.json({ 
+        user: {
+          id: updatedUser.id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          mobile: updatedUser.mobile,
+          role: updatedUser.role,
+        }
+      });
+    } catch (error) {
+      console.error("Update profile error:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  // Address management endpoints
+  app.get("/api/addresses", authenticate, async (req: AuthRequest, res) => {
+    try {
+      const addresses = await storage.getAddressesByUser(req.user!.id);
+      res.json(addresses);
+    } catch (error) {
+      console.error("Get addresses error:", error);
+      res.status(500).json({ message: "Failed to fetch addresses" });
+    }
+  });
+
+  app.post("/api/addresses", authenticate, async (req: AuthRequest, res) => {
+    try {
+      const validationResult = secureAddressSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({
+          message: "Validation failed",
+          errors: validationResult.error.errors,
+        });
+      }
+
+      const addressData = { ...validationResult.data, userId: req.user!.id };
+      const address = await storage.createAddress(addressData);
+      res.json({ address });
+    } catch (error) {
+      console.error("Create address error:", error);
+      res.status(500).json({ message: "Failed to create address" });
+    }
+  });
+
+  app.put("/api/addresses/:id", authenticate, async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const validationResult = secureAddressSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({
+          message: "Validation failed",
+          errors: validationResult.error.errors,
+        });
+      }
+
+      const address = await storage.updateAddress(parseInt(id), validationResult.data);
+      res.json({ address });
+    } catch (error) {
+      console.error("Update address error:", error);
+      res.status(500).json({ message: "Failed to update address" });
+    }
+  });
+
+  app.delete("/api/addresses/:id", authenticate, async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteAddress(parseInt(id));
+      res.json({ message: "Address deleted successfully" });
+    } catch (error) {
+      console.error("Delete address error:", error);
+      res.status(500).json({ message: "Failed to delete address" });
     }
   });
 

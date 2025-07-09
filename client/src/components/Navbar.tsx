@@ -56,7 +56,14 @@ export default function Navbar() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/" className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-primary">Panaroma</h1>
+                <div className="flex items-center">
+                  <img 
+                    src="/logo.jpeg" 
+                    alt="Panaroma Logo" 
+                    className="h-8 w-8 rounded-full object-cover mr-2"
+                  />
+                  <h1 className="text-2xl font-bold text-primary">Panaroma</h1>
+                </div>
               </Link>
               <div className="hidden md:block ml-10">
                 <div className="flex items-baseline space-x-4">

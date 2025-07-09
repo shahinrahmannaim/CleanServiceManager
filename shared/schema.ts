@@ -142,6 +142,23 @@ export const otpCodes = pgTable("otp_codes", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// User addresses
+export const addresses = pgTable("addresses", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id, { onDelete: "cascade" }).notNull(),
+  type: text("type").notNull(), // 'home', 'work', 'other'
+  street: text("street").notNull(),
+  city: text("city").notNull(),
+  area: text("area").notNull(),
+  building: text("building"),
+  floor: text("floor"),
+  apartment: text("apartment"),
+  instructions: text("instructions"),
+  isDefault: boolean("is_default").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   bookings: many(bookings),
@@ -150,6 +167,14 @@ export const usersRelations = relations(users, ({ many }) => ({
   timeLogs: many(employeeTimeLogs),
   invoices: many(invoices),
   services: many(services),
+  addresses: many(addresses),
+}));
+
+export const addressesRelations = relations(addresses, ({ one }) => ({
+  user: one(users, {
+    fields: [addresses.userId],
+    references: [users.id],
+  }),
 }));
 
 export const categoriesRelations = relations(categories, ({ many }) => ({
@@ -305,6 +330,12 @@ export const insertOtpCodeSchema = createInsertSchema(otpCodes).omit({
   createdAt: true,
 });
 
+export const insertAddressSchema = createInsertSchema(addresses).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -330,3 +361,5 @@ export type Invoice = typeof invoices.$inferSelect;
 export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
 export type OtpCode = typeof otpCodes.$inferSelect;
 export type InsertOtpCode = z.infer<typeof insertOtpCodeSchema>;
+export type Address = typeof addresses.$inferSelect;
+export type InsertAddress = z.infer<typeof insertAddressSchema>;

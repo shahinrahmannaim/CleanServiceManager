@@ -1,400 +1,686 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '../hooks/useAuth';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { apiRequest } from '../lib/queryClient';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
-import { User, Mail, Phone, MapPin, Calendar, Shield, Star, Edit2, Save, X } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { Plus, Edit, Trash2, User, MapPin, Lock, Home, Building, MapIcon } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
 
+// Validation schemas
 const profileSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
-  mobile: z.string().min(8, 'Mobile number must be at least 8 digits'),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  mobile: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid mobile number"),
+  currentPassword: z.string().optional(),
+  newPassword: z.string().optional(),
+  confirmPassword: z.string().optional(),
+}).refine((data) => {
+  if (data.newPassword || data.confirmPassword) {
+    return data.currentPassword && data.newPassword && data.confirmPassword;
+  }
+  return true;
+}, {
+  message: "Current password is required when changing password",
+  path: ["currentPassword"],
+}).refine((data) => {
+  if (data.newPassword && data.confirmPassword) {
+    return data.newPassword === data.confirmPassword;
+  }
+  return true;
+}, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
+const addressSchema = z.object({
+  type: z.enum(["home", "work", "other"]),
+  street: z.string().min(5, "Street address must be at least 5 characters"),
+  city: z.string().min(2, "City must be at least 2 characters"),
+  area: z.string().min(2, "Area must be at least 2 characters"),
+  building: z.string().optional(),
+  floor: z.string().optional(),
+  apartment: z.string().optional(),
+  instructions: z.string().optional(),
+  isDefault: z.boolean().default(false),
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
+type AddressFormData = z.infer<typeof addressSchema>;
+
 export default function Profile() {
-  const { user, refetch } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<any>(null);
 
-  const { data: bookings } = useQuery({
-    queryKey: ['/api/bookings'],
+  // Queries
+  const { data: addresses = [] } = useQuery({
+    queryKey: ["/api/addresses"],
     enabled: !!user,
   });
 
-  const { data: favorites } = useQuery({
-    queryKey: ['/api/favorites'],
-    enabled: !!user,
-  });
-
-  const profileForm = useForm<z.infer<typeof profileSchema>>({
+  // Profile form
+  const profileForm = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: user?.name || '',
-      email: user?.email || '',
-      mobile: user?.mobile || '',
+      name: user?.name || "",
+      email: user?.email || "",
+      mobile: user?.mobile || "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
     },
   });
 
+  // Address form
+  const addressForm = useForm<AddressFormData>({
+    resolver: zodResolver(addressSchema),
+    defaultValues: {
+      type: "home",
+      street: "",
+      city: "",
+      area: "",
+      building: "",
+      floor: "",
+      apartment: "",
+      instructions: "",
+      isDefault: false,
+    },
+  });
+
+  // Mutations
   const updateProfileMutation = useMutation({
-    mutationFn: (data: z.infer<typeof profileSchema>) =>
-      apiRequest('PUT', `/api/users/${user?.id}`, data),
+    mutationFn: (data: ProfileFormData) => apiRequest("/api/users/profile", {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
     onSuccess: () => {
-      setIsEditing(false);
-      refetch();
       toast({
         title: "Profile updated",
         description: "Your profile has been updated successfully.",
       });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      profileForm.reset({
+        ...profileForm.getValues(),
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     },
     onError: (error: any) => {
       toast({
-        title: "Update failed",
-        description: error.message || "Failed to update profile.",
+        title: "Error",
+        description: error.message || "Failed to update profile",
         variant: "destructive",
       });
     },
   });
 
-  const handleSave = (data: z.infer<typeof profileSchema>) => {
-    updateProfileMutation.mutate(data);
+  const createAddressMutation = useMutation({
+    mutationFn: (data: AddressFormData) => apiRequest("/api/addresses", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+    onSuccess: () => {
+      toast({
+        title: "Address added",
+        description: "Your address has been added successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+      setIsAddressDialogOpen(false);
+      addressForm.reset();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add address",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateAddressMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: AddressFormData }) => 
+      apiRequest(`/api/addresses/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }),
+    onSuccess: () => {
+      toast({
+        title: "Address updated",
+        description: "Your address has been updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+      setIsAddressDialogOpen(false);
+      setEditingAddress(null);
+      addressForm.reset();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update address",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteAddressMutation = useMutation({
+    mutationFn: (id: number) => apiRequest(`/api/addresses/${id}`, {
+      method: "DELETE",
+    }),
+    onSuccess: () => {
+      toast({
+        title: "Address deleted",
+        description: "Your address has been deleted successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/addresses"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete address",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Handlers
+  const handleProfileSubmit = (data: ProfileFormData) => {
+    const submitData = { ...data };
+    if (!submitData.newPassword) {
+      delete submitData.currentPassword;
+      delete submitData.newPassword;
+      delete submitData.confirmPassword;
+    }
+    updateProfileMutation.mutate(submitData);
   };
 
-  const handleCancel = () => {
-    setIsEditing(false);
-    profileForm.reset({
-      name: user?.name || '',
-      email: user?.email || '',
-      mobile: user?.mobile || '',
-    });
-  };
-
-  const recentBookings = bookings?.slice(0, 3) || [];
-  const totalBookings = bookings?.length || 0;
-  const completedBookings = bookings?.filter((booking: any) => booking.status === 'completed').length || 0;
-  const totalSpent = bookings?.reduce((sum: number, booking: any) => sum + parseFloat(booking.totalAmount || '0'), 0) || 0;
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case 'admin':
-        return 'bg-purple-100 text-purple-800';
-      case 'superadmin':
-        return 'bg-red-100 text-red-800';
-      case 'employee':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+  const handleAddressSubmit = (data: AddressFormData) => {
+    if (editingAddress) {
+      updateAddressMutation.mutate({ id: editingAddress.id, data });
+    } else {
+      createAddressMutation.mutate(data);
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'confirmed':
-        return 'bg-blue-100 text-blue-800';
-      case 'in_progress':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'pending':
-        return 'bg-gray-100 text-gray-800';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800';
+  const handleEditAddress = (address: any) => {
+    setEditingAddress(address);
+    addressForm.reset({
+      type: address.type,
+      street: address.street,
+      city: address.city,
+      area: address.area,
+      building: address.building || "",
+      floor: address.floor || "",
+      apartment: address.apartment || "",
+      instructions: address.instructions || "",
+      isDefault: address.isDefault,
+    });
+    setIsAddressDialogOpen(true);
+  };
+
+  const handleDeleteAddress = (id: number) => {
+    if (confirm("Are you sure you want to delete this address?")) {
+      deleteAddressMutation.mutate(id);
+    }
+  };
+
+  const getAddressTypeIcon = (type: string) => {
+    switch (type) {
+      case "home":
+        return <Home className="h-4 w-4" />;
+      case "work":
+        return <Building className="h-4 w-4" />;
       default:
-        return 'bg-gray-100 text-gray-800';
+        return <MapPin className="h-4 w-4" />;
     }
   };
 
   if (!user) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-          <p className="text-gray-600">Please login to access your profile.</p>
-        </div>
-      </div>
-    );
+    return <div>Please log in to view your profile.</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Profile Overview */}
-          <div className="lg:col-span-1">
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Profile</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Manage your account settings and preferences
+          </p>
+        </div>
+
+        <Tabs defaultValue="profile" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="profile" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="addresses" className="flex items-center gap-2">
+              <MapIcon className="h-4 w-4" />
+              Addresses
+            </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center gap-2">
+              <Lock className="h-4 w-4" />
+              Security
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="profile">
             <Card>
-              <CardHeader className="text-center">
-                <Avatar className="w-24 h-24 mx-auto mb-4">
-                  <AvatarFallback className="text-2xl">
-                    {user.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <CardTitle className="text-2xl">{user.name}</CardTitle>
-                <div className="flex justify-center mt-2">
-                  <Badge className={getRoleColor(user.role)}>
-                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                  </Badge>
-                </div>
+              <CardHeader>
+                <CardTitle>Profile Information</CardTitle>
+                <CardDescription>
+                  Update your personal information and contact details
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center text-gray-600">
-                  <Mail className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{user.email}</span>
-                </div>
-                <div className="flex items-center text-gray-600">
-                  <Phone className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{user.mobile}</span>
-                </div>
-                <div className="flex items-center text-gray-600">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  <span className="text-sm">Member since {new Date(user.createdAt).toLocaleDateString()}</span>
-                </div>
-                
-                <Separator />
-                
-                <div className="grid grid-cols-2 gap-4 text-center">
-                  <div>
-                    <div className="text-2xl font-bold text-primary">{totalBookings}</div>
-                    <div className="text-sm text-gray-600">Total Bookings</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-green-600">{completedBookings}</div>
-                    <div className="text-sm text-gray-600">Completed</div>
-                  </div>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-accent">{totalSpent.toFixed(2)} QAR</div>
-                  <div className="text-sm text-gray-600">Total Spent</div>
-                </div>
+              <CardContent>
+                <Form {...profileForm}>
+                  <form onSubmit={profileForm.handleSubmit(handleProfileSubmit)} className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={profileForm.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your full name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={profileForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your email" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={profileForm.control}
+                        name="mobile"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Mobile Number</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your mobile number" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="secondary">{user.role}</Badge>
+                        <span className="text-sm text-gray-500">Role</span>
+                      </div>
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      disabled={updateProfileMutation.isPending}
+                      className="w-full md:w-auto"
+                    >
+                      {updateProfileMutation.isPending ? "Updating..." : "Update Profile"}
+                    </Button>
+                  </form>
+                </Form>
               </CardContent>
             </Card>
-          </div>
+          </TabsContent>
 
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="profile" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="profile">Profile</TabsTrigger>
-                <TabsTrigger value="bookings">Recent Bookings</TabsTrigger>
-                <TabsTrigger value="favorites">Favorites</TabsTrigger>
-              </TabsList>
+          <TabsContent value="addresses">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>My Addresses</CardTitle>
+                    <CardDescription>
+                      Manage your saved addresses for faster booking
+                    </CardDescription>
+                  </div>
+                  <Dialog open={isAddressDialogOpen} onOpenChange={setIsAddressDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button onClick={() => {
+                        setEditingAddress(null);
+                        addressForm.reset();
+                      }}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Address
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>
+                          {editingAddress ? "Edit Address" : "Add New Address"}
+                        </DialogTitle>
+                      </DialogHeader>
+                      <Form {...addressForm}>
+                        <form onSubmit={addressForm.handleSubmit(handleAddressSubmit)} className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                              control={addressForm.control}
+                              name="type"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Address Type</FormLabel>
+                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Select address type" />
+                                      </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                      <SelectItem value="home">Home</SelectItem>
+                                      <SelectItem value="work">Work</SelectItem>
+                                      <SelectItem value="other">Other</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
 
-              <TabsContent value="profile">
-                <Card>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle>Profile Information</CardTitle>
-                      {!isEditing ? (
-                        <Button
-                          variant="outline"
-                          onClick={() => setIsEditing(true)}
-                          className="flex items-center gap-2"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                          Edit Profile
-                        </Button>
-                      ) : (
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            onClick={handleCancel}
-                            className="flex items-center gap-2"
-                          >
-                            <X className="w-4 h-4" />
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={profileForm.handleSubmit(handleSave)}
-                            disabled={updateProfileMutation.isPending}
-                            className="flex items-center gap-2"
-                          >
-                            <Save className="w-4 h-4" />
-                            {updateProfileMutation.isPending ? 'Saving...' : 'Save'}
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Form {...profileForm}>
-                      <form className="space-y-6">
-                        <FormField
-                          control={profileForm.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Full Name</FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  disabled={!isEditing}
-                                  className={!isEditing ? 'bg-gray-50' : ''}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                            <FormField
+                              control={addressForm.control}
+                              name="city"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>City</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter city" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
 
-                        <FormField
-                          control={profileForm.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Email Address</FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  disabled={!isEditing}
-                                  className={!isEditing ? 'bg-gray-50' : ''}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                            <FormField
+                              control={addressForm.control}
+                              name="area"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Area</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter area" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
 
-                        <FormField
-                          control={profileForm.control}
-                          name="mobile"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Mobile Number</FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  disabled={!isEditing}
-                                  className={!isEditing ? 'bg-gray-50' : ''}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                            <FormField
+                              control={addressForm.control}
+                              name="building"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Building (Optional)</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter building name/number" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="text-sm font-medium text-gray-700">Account Status</label>
-                            <div className="mt-1 flex items-center gap-2">
-                              <Shield className="w-4 h-4 text-green-600" />
-                              <span className="text-sm text-green-600">Verified</span>
-                            </div>
+                            <FormField
+                              control={addressForm.control}
+                              name="floor"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Floor (Optional)</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter floor number" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={addressForm.control}
+                              name="apartment"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Apartment (Optional)</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter apartment number" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
                           </div>
-                          <div>
-                            <label className="text-sm font-medium text-gray-700">Member Since</label>
-                            <div className="mt-1 text-sm text-gray-600">
-                              {new Date(user.createdAt).toLocaleDateString()}
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </Form>
-                  </CardContent>
-                </Card>
-              </TabsContent>
 
-              <TabsContent value="bookings">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Recent Bookings</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {recentBookings.length === 0 ? (
-                      <div className="text-center py-8">
-                        <Calendar className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                        <p className="text-gray-500">No bookings yet</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Start booking our cleaning services!
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {recentBookings.map((booking: any) => (
-                          <div key={booking.id} className="border rounded-lg p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <h3 className="font-semibold">{booking.service?.name}</h3>
-                              <Badge className={getStatusColor(booking.status)}>
-                                {booking.status.replace('_', ' ')}
-                              </Badge>
-                            </div>
-                            <div className="text-sm text-gray-600 space-y-1">
-                              <div className="flex items-center">
-                                <Calendar className="w-4 h-4 mr-2" />
-                                {new Date(booking.scheduledDate).toLocaleDateString()}
-                              </div>
-                              <div className="flex items-center">
-                                <MapPin className="w-4 h-4 mr-2" />
-                                {booking.city}
-                              </div>
-                              <div className="flex items-center justify-between mt-2">
-                                <span className="font-medium">{booking.totalAmount} QAR</span>
-                                <span className="text-xs text-gray-500">
-                                  Booked {new Date(booking.createdAt).toLocaleDateString()}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
+                          <FormField
+                            control={addressForm.control}
+                            name="street"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Street Address</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter street address" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
 
-              <TabsContent value="favorites">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Favorite Services</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {favorites?.length === 0 ? (
-                      <div className="text-center py-8">
-                        <Star className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                        <p className="text-gray-500">No favorite services yet</p>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Browse our services and add your favorites!
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {favorites?.map((favorite: any) => (
-                          <div key={favorite.id} className="border rounded-lg p-4">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h3 className="font-semibold">{favorite.service?.name}</h3>
-                                <p className="text-sm text-gray-600">{favorite.service?.description}</p>
-                                <div className="flex items-center mt-2">
-                                  <Badge variant="secondary">{favorite.service?.category?.name}</Badge>
-                                  <span className="ml-2 font-medium text-primary">
-                                    {favorite.service?.price} QAR
-                                  </span>
+                          <FormField
+                            control={addressForm.control}
+                            name="instructions"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Delivery Instructions (Optional)</FormLabel>
+                                <FormControl>
+                                  <Textarea 
+                                    placeholder="Enter any special delivery instructions" 
+                                    {...field} 
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={addressForm.control}
+                            name="isDefault"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                  <FormLabel>Set as default address</FormLabel>
                                 </div>
+                              </FormItem>
+                            )}
+                          />
+
+                          <div className="flex gap-2">
+                            <Button 
+                              type="submit" 
+                              disabled={createAddressMutation.isPending || updateAddressMutation.isPending}
+                            >
+                              {createAddressMutation.isPending || updateAddressMutation.isPending 
+                                ? "Saving..." 
+                                : editingAddress ? "Update Address" : "Add Address"
+                              }
+                            </Button>
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              onClick={() => setIsAddressDialogOpen(false)}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {addresses.length === 0 ? (
+                  <div className="text-center py-8">
+                    <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500">No addresses saved yet</p>
+                    <p className="text-sm text-gray-400 mt-2">
+                      Add your first address to get started
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {addresses.map((address: any) => (
+                      <div key={address.id} className="border rounded-lg p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3">
+                            {getAddressTypeIcon(address.type)}
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-medium capitalize">{address.type}</span>
+                                {address.isDefault && (
+                                  <Badge variant="secondary" className="text-xs">Default</Badge>
+                                )}
                               </div>
-                              <Button size="sm" className="btn-accent">
-                                Book Now
-                              </Button>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                {address.street}
+                              </p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                {address.area}, {address.city}
+                              </p>
+                              {(address.building || address.floor || address.apartment) && (
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {[address.building, address.floor && `Floor ${address.floor}`, address.apartment && `Apt ${address.apartment}`].filter(Boolean).join(", ")}
+                                </p>
+                              )}
+                              {address.instructions && (
+                                <p className="text-sm text-gray-500 mt-1">
+                                  {address.instructions}
+                                </p>
+                              )}
                             </div>
                           </div>
-                        ))}
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditAddress(address)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteAddress(address.id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="security">
+            <Card>
+              <CardHeader>
+                <CardTitle>Change Password</CardTitle>
+                <CardDescription>
+                  Update your password to keep your account secure
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...profileForm}>
+                  <form onSubmit={profileForm.handleSubmit(handleProfileSubmit)} className="space-y-4">
+                    <FormField
+                      control={profileForm.control}
+                      name="currentPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Current Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Enter current password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={profileForm.control}
+                      name="newPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>New Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Enter new password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={profileForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Confirm New Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Confirm new password" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button 
+                      type="submit" 
+                      disabled={updateProfileMutation.isPending}
+                    >
+                      {updateProfileMutation.isPending ? "Updating..." : "Update Password"}
+                    </Button>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

@@ -22,6 +22,8 @@ import AdminEmployees from "@/pages/admin/Employees";
 import AdminPromotions from "@/pages/admin/Promotions";
 import AdminPaymentMethods from "@/pages/admin/PaymentMethods";
 import EmployeeTimeTracker from "@/pages/employee/TimeTracker";
+import About from "@/pages/About";
+import Contact from "@/pages/Contact";
 
 function Router() {
   return (
@@ -29,6 +31,8 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/services" component={Services} />
       <Route path="/services/:id" component={ServiceDetails} />
+      <Route path="/about" component={About} />
+      <Route path="/contact" component={Contact} />
       
       <Route path="/profile">
         <ProtectedRoute>

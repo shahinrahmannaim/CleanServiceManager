@@ -1,12 +1,13 @@
 import { 
   users, categories, services, bookings, payments, paymentMethods, promotions,
-  favorites, cart, employeeTimeLogs, invoices, otpCodes,
+  favorites, cart, employeeTimeLogs, invoices, otpCodes, addresses,
   type User, type InsertUser, type Category, type InsertCategory,
   type Service, type InsertService, type Booking, type InsertBooking,
   type Payment, type InsertPayment, type PaymentMethod, type InsertPaymentMethod,
   type Promotion, type InsertPromotion, type Favorite, type InsertFavorite,
   type Cart, type InsertCart, type EmployeeTimeLog, type InsertEmployeeTimeLog,
-  type Invoice, type InsertInvoice, type OtpCode, type InsertOtpCode
+  type Invoice, type InsertInvoice, type OtpCode, type InsertOtpCode,
+  type Address, type InsertAddress
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, or, like, gte, lte } from "drizzle-orm";
@@ -106,6 +107,13 @@ export interface IStorage {
   createOtpCode(otpCode: InsertOtpCode): Promise<OtpCode>;
   updateOtpCode(id: number, otpCode: Partial<InsertOtpCode>): Promise<OtpCode>;
   deleteExpiredOtpCodes(): Promise<void>;
+  
+  // Addresses
+  getAddress(id: number): Promise<Address | undefined>;
+  getAddressesByUser(userId: number): Promise<Address[]>;
+  createAddress(address: InsertAddress): Promise<Address>;
+  updateAddress(id: number, address: Partial<InsertAddress>): Promise<Address>;
+  deleteAddress(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -468,6 +476,30 @@ export class DatabaseStorage implements IStorage {
       eq(otpCodes.isUsed, true),
       lte(otpCodes.expiresAt, new Date())
     ));
+  }
+
+  // Address methods
+  async getAddress(id: number): Promise<Address | undefined> {
+    const [address] = await db.select().from(addresses).where(eq(addresses.id, id));
+    return address || undefined;
+  }
+
+  async getAddressesByUser(userId: number): Promise<Address[]> {
+    return await db.select().from(addresses).where(eq(addresses.userId, userId));
+  }
+
+  async createAddress(address: InsertAddress): Promise<Address> {
+    const [newAddress] = await db.insert(addresses).values(address).returning();
+    return newAddress;
+  }
+
+  async updateAddress(id: number, address: Partial<InsertAddress>): Promise<Address> {
+    const [updatedAddress] = await db.update(addresses).set(address).where(eq(addresses.id, id)).returning();
+    return updatedAddress;
+  }
+
+  async deleteAddress(id: number): Promise<void> {
+    await db.delete(addresses).where(eq(addresses.id, id));
   }
 }
 
