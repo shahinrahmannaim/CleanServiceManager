@@ -167,7 +167,7 @@ export default function Services() {
   const filteredServices = services?.filter((service: any) => {
     const matchesSearch = service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       service.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !selectedCategory || service.categoryId.toString() === selectedCategory;
+    const matchesCategory = !selectedCategory || selectedCategory === 'all' || service.categoryId.toString() === selectedCategory;
     return matchesSearch && matchesCategory;
   }) || [];
 
@@ -210,7 +210,7 @@ export default function Services() {
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {categories?.map((category: any) => (
                   <SelectItem key={category.id} value={category.id.toString()}>
                     {category.name}

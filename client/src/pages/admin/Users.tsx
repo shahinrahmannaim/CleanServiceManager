@@ -112,7 +112,7 @@ export default function AdminUsers() {
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.mobile.includes(searchQuery);
     
-    const matchesRole = !selectedRole || user.role === selectedRole;
+    const matchesRole = !selectedRole || selectedRole === 'all' || user.role === selectedRole;
     
     return matchesSearch && matchesRole;
   }) || [];
@@ -165,7 +165,7 @@ export default function AdminUsers() {
                   <SelectValue placeholder="Filter by role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Roles</SelectItem>
+                  <SelectItem value="all">All Roles</SelectItem>
                   <SelectItem value="user">Customer</SelectItem>
                   <SelectItem value="employee">Employee</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
