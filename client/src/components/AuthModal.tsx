@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
 
 const loginSchema = z.object({
   identifier: z.string().min(1, 'Email or mobile is required'),
@@ -58,6 +59,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [mode, setMode] = useState<'login' | 'register' | 'otp'>('login');
   const [otpIdentifier, setOtpIdentifier] = useState('');
   const [otpType, setOtpType] = useState<'email' | 'mobile'>('email');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { setUser, refetch } = useAuth();
   const { toast } = useToast();
 
@@ -202,11 +205,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <img 
               src="/logo.jpeg" 
               alt="Panaroma Cleaning Services" 
-              className="h-16 w-16 rounded-full object-cover shadow-lg border-4 border-blue-100"
+              className="h-16 w-auto object-contain"
             />
           </div>
           <DialogTitle className="text-center">
-            {mode === 'login' && 'Login to Panaroma'}
+            {mode === 'login' && (
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+                <p className="text-gray-600 text-sm">Sign in to your Panaroma account</p>
+              </div>
+            )}
             {mode === 'register' && 'Join Panaroma'}
             {mode === 'otp' && 'Enter OTP Code'}
           </DialogTitle>
@@ -325,9 +333,17 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     name="identifier"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email or Mobile</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium">Email Address</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter email or mobile" {...field} />
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            <Input
+                              type="email"
+                              placeholder="Enter your email"
+                              className="pl-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
+                              {...field}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -339,35 +355,54 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium">Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="Enter password" {...field} />
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Enter your password"
+                              className="pl-12 pr-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? (
+                                <EyeOff className="h-5 w-5 text-gray-400" />
+                              ) : (
+                                <Eye className="h-5 w-5 text-gray-400" />
+                              )}
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
 
+                  <div className="text-right">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setMode('otp')}
+                      className="text-sm text-blue-600 hover:text-blue-800 p-0 h-auto"
+                    >
+                      Forgot password?
+                    </Button>
+                  </div>
+
                   <Button
                     type="submit"
                     disabled={loginMutation.isPending}
-                    className="w-full btn-primary"
+                    className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
                   >
-                    {loginMutation.isPending ? 'Logging in...' : 'Login'}
+                    {loginMutation.isPending ? "Signing in..." : "Sign In"}
                   </Button>
                 </form>
               </Form>
-
-              <div className="text-center">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setMode('otp')}
-                  className="text-accent hover:text-accent/80"
-                >
-                  Login with OTP
-                </Button>
-              </div>
             </TabsContent>
 
             <TabsContent value="register" className="space-y-4">
@@ -378,9 +413,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium">Full Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your full name" {...field} />
+                          <div className="relative">
+                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            <Input
+                              placeholder="Enter your full name"
+                              className="pl-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
+                              {...field}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -392,9 +434,17 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium">Email</FormLabel>
                         <FormControl>
-                          <Input type="email" placeholder="Enter your email" {...field} />
+                          <div className="relative">
+                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            <Input
+                              type="email"
+                              placeholder="Enter your email"
+                              className="pl-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
+                              {...field}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -406,9 +456,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     name="mobile"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Mobile Number</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium">Mobile Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter your mobile number" {...field} />
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            <Input
+                              placeholder="Enter your mobile number"
+                              className="pl-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
+                              {...field}
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -420,10 +477,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     name="role"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Account Type</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium">Account Type</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500">
                               <SelectValue placeholder="Select account type" />
                             </SelectTrigger>
                           </FormControl>
@@ -442,9 +499,28 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium">Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="Enter password" {...field} />
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="Enter password"
+                              className="pl-12 pr-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? (
+                                <EyeOff className="h-5 w-5 text-gray-400" />
+                              ) : (
+                                <Eye className="h-5 w-5 text-gray-400" />
+                              )}
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -456,9 +532,28 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
+                        <FormLabel className="text-gray-700 font-medium">Confirm Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="Confirm password" {...field} />
+                          <div className="relative">
+                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            <Input
+                              type={showConfirmPassword ? "text" : "password"}
+                              placeholder="Confirm password"
+                              className="pl-12 pr-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                              {showConfirmPassword ? (
+                                <EyeOff className="h-5 w-5 text-gray-400" />
+                              ) : (
+                                <Eye className="h-5 w-5 text-gray-400" />
+                              )}
+                            </button>
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -468,7 +563,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <Button
                     type="submit"
                     disabled={registerMutation.isPending}
-                    className="w-full btn-primary"
+                    className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
                   >
                     {registerMutation.isPending ? 'Creating Account...' : 'Create Account'}
                   </Button>
