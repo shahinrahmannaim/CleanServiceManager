@@ -71,9 +71,9 @@ export default function Navbar() {
   return (
     <>
       {/* Top Contact Bar */}
-      <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white py-2 text-sm relative overflow-hidden">
-        {/* Background overlay similar to hero section */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/95 via-blue-800/90 to-blue-700/95"></div>
+      <div className="bg-gradient-to-r from-red-500 via-red-600 to-blue-900 text-white py-2 text-sm relative overflow-hidden">
+        {/* Background overlay with tomato to navy gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-red-500/95 via-red-600/90 to-blue-900/95"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div className="flex items-center space-x-6">
             <div className="flex items-center">
