@@ -31,7 +31,18 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4 gradient-text">Panaroma</h3>
+            <div className="flex items-center mb-4">
+              <img 
+                src="/logo.jpeg" 
+                alt="Panaroma Cleaning Services" 
+                className="h-16 w-16 rounded-full object-cover mr-4"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = "/logo.svg";
+                  target.className = "h-16 w-16 rounded-lg object-cover mr-4";
+                }}
+              />
+            </div>
             <p className="text-gray-300 mb-4">
               Professional cleaning services across Qatar. Licensed, insured, and trusted by thousands.
             </p>

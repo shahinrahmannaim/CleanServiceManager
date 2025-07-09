@@ -101,15 +101,14 @@ export default function Navbar() {
               <img 
                 src="/logo.jpeg" 
                 alt="Panaroma Cleaning Services" 
-                className="h-10 w-10 rounded-full object-cover mr-3"
+                className="h-12 w-12 rounded-full object-cover"
                 onError={(e) => {
                   // Fallback to SVG logo if JPEG fails
                   const target = e.target as HTMLImageElement;
                   target.src = "/logo.svg";
-                  target.className = "h-10 w-10 rounded-lg object-cover mr-3";
+                  target.className = "h-12 w-12 rounded-lg object-cover";
                 }}
               />
-              <span className="text-xl font-bold text-blue-600">Panaroma</span>
             </Link>
 
             {/* Desktop Navigation */}

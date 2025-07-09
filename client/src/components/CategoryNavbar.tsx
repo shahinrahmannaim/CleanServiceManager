@@ -38,9 +38,9 @@ export default function CategoryNavbar() {
   }
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200 shadow-sm">
+    <div className="bg-gradient-to-r from-blue-50 to-red-50 border-b border-gray-200 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14">
+        <div className="flex items-center justify-between h-16">
           {/* Breadcrumb */}
           <div className="flex items-center space-x-2 text-sm text-gray-700">
             <Link href="/">
@@ -74,9 +74,9 @@ export default function CategoryNavbar() {
                 <Link href="/services">
                   <Badge 
                     variant={location === '/services' ? 'default' : 'secondary'}
-                    className="flex items-center space-x-1 px-3 py-1.5 bg-white hover:bg-blue-600 hover:text-white cursor-pointer transition-all duration-200 shadow-sm border border-blue-200 text-blue-700 hover:border-blue-600"
+                    className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-primary hover:text-white cursor-pointer transition-all duration-200 shadow-md border border-primary/20 text-primary hover:border-primary text-sm font-medium"
                   >
-                    <Sparkles className="h-3 w-3" />
+                    <Sparkles className="h-4 w-4" />
                     <span>All Services</span>
                   </Badge>
                 </Link>
@@ -86,9 +86,9 @@ export default function CategoryNavbar() {
                     <Link key={category.id} href={`/services?category=${category.id}`}>
                       <Badge 
                         variant="secondary"
-                        className="flex items-center space-x-1 px-3 py-1.5 bg-white hover:bg-blue-600 hover:text-white cursor-pointer transition-all duration-200 shadow-sm border border-blue-200 text-blue-700 hover:border-blue-600"
+                        className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-accent hover:text-white cursor-pointer transition-all duration-200 shadow-md border border-accent/20 text-accent hover:border-accent text-sm font-medium"
                       >
-                        <IconComponent className="h-3 w-3" />
+                        <IconComponent className="h-4 w-4" />
                         <span>{category.name}</span>
                       </Badge>
                     </Link>
@@ -100,10 +100,10 @@ export default function CategoryNavbar() {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 hover:bg-blue-100 px-3 py-1.5"
+                    className="flex items-center space-x-2 text-primary hover:text-accent hover:bg-primary/10 px-4 py-2 text-sm font-medium"
                   >
-                    <span className="text-sm">View All</span>
-                    <ArrowRight className="h-3 w-3" />
+                    <span>View All</span>
+                    <ArrowRight className="h-4 w-4" />
                   </Button>
                 </Link>
               </div>
