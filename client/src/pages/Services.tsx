@@ -25,16 +25,20 @@ export default function Services() {
 
   // Initialize filters from URL parameters
   useEffect(() => {
-    if (initialCity) setSelectedCity(initialCity);
-    if (initialCategory) setSelectedCategory(initialCategory);
-  }, [initialCity, initialCategory]);
+    const urlParams = new URLSearchParams(location.split('?')[1] || '');
+    const urlCity = urlParams.get('city') || '';
+    const urlCategory = urlParams.get('category') || '';
+    
+    setSelectedCity(urlCity);
+    setSelectedCategory(urlCategory);
+  }, [location]);
 
   const { data: services, isLoading: servicesLoading } = useQuery({
-    queryKey: ['/api/services', searchQuery, selectedCategory || initialCategory],
+    queryKey: ['/api/services', searchQuery, selectedCategory, location],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (searchQuery) params.set('search', searchQuery);
-      if (selectedCategory || initialCategory) params.set('category', selectedCategory || initialCategory);
+      if (selectedCategory) params.set('category', selectedCategory);
       
       const response = await fetch(`/api/services?${params.toString()}`);
       return response.json();
@@ -171,17 +175,18 @@ export default function Services() {
         </Card>
 
         {/* Active Filters */}
-        {(selectedCity || selectedCategory || initialCity || initialCategory) && (
+        {(selectedCity || selectedCategory) && (
           <div className="mb-6 flex flex-wrap gap-2">
-            {(selectedCity || initialCity) && (
+            {selectedCity && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
-                {selectedCity || initialCity}
+                {selectedCity}
               </Badge>
             )}
-            {(selectedCategory || initialCategory) && (
-              <Badge variant="secondary">
-                {categories?.find((cat: any) => cat.id.toString() === (selectedCategory || initialCategory))?.name}
+            {selectedCategory && (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Filter className="w-3 h-3" />
+                {categories?.find((cat: any) => cat.id.toString() === selectedCategory)?.name || 'Category'}
               </Badge>
             )}
           </div>

@@ -90,7 +90,7 @@ export default function CategoryNavbar() {
                     <Link key={category.id} href={`/services?category=${category.id}`}>
                       <Badge 
                         variant="secondary"
-                        className="flex items-center space-x-3 px-4 py-2 bg-white hover:bg-red-500 hover:text-white cursor-pointer transition-all duration-200 shadow-lg border border-red-500/20 text-red-500 hover:border-red-500 text-[15px] font-semibold rounded-lg text-justify"
+                        className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 flex items-center space-x-3 px-6 py-3 bg-white hover:bg-red-500 hover:text-white cursor-pointer transition-all duration-200 shadow-lg border border-red-500/20 text-red-500 hover:border-red-500 font-semibold rounded-lg text-[15px] pl-[10px] pr-[10px] ml-[5px] mr-[5px] mt-[7px] mb-[7px] text-justify"
                       >
                         <IconComponent className="h-5 w-5" />
                         <span>{category.name}</span>
