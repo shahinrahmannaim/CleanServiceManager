@@ -42,75 +42,62 @@ export default function CategoryNavbar() {
   }
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-red-50 border-b border-gray-200 shadow-lg">
+    <div className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          {/* Breadcrumb */}
-          <div className="flex items-center space-x-2 text-sm text-gray-700">
-            <Link href="/">
-              <Button variant="ghost" size="sm" className="p-3 h-auto hover:bg-blue-100">
-                <Home className="h-8 w-8" />
-              </Button>
-            </Link>
-            <ChevronRight className="h-5 w-5 text-gray-400" />
-            <span className="capitalize font-medium">
-              {location === '/' ? '' : 
-               location === '/services' ? 'Services' : 
-               location === '/about' ? 'About' : 
-               location === '/contact' ? 'Contact' : 
-               location.split('/').pop()?.replace('-', ' ')}
-            </span>
-          </div>
-
-          {/* Category Pills with Enhanced Icons */}
-          <div className="flex items-center space-x-3 overflow-x-auto">
+        <div className="py-6">
+          {/* Category Grid */}
+          <div className="flex items-center justify-center space-x-8 overflow-x-auto">
             {isLoading ? (
-              <div className="flex space-x-3">
-                {[1, 2, 3, 4].map((i) => (
+              <div className="flex space-x-8">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div
                     key={i}
-                    className="h-12 w-32 bg-blue-200 rounded-lg animate-pulse"
-                  />
+                    className="flex flex-col items-center space-y-2 animate-pulse"
+                  >
+                    <div className="w-16 h-16 bg-gray-200 rounded-full" />
+                    <div className="w-20 h-4 bg-gray-200 rounded" />
+                  </div>
                 ))}
               </div>
             ) : (
-              <div className="flex items-center space-x-3">
+              <>
+                {/* All Services */}
                 <Link href="/services">
-                  <Badge 
-                    variant={location === '/services' ? 'default' : 'secondary'}
-                    className="flex items-center space-x-4 px-6 py-4 bg-white hover:bg-blue-600 hover:text-white cursor-pointer transition-all duration-200 shadow-lg border border-blue-600/20 text-blue-600 hover:border-blue-600 text-base font-semibold rounded-lg"
-                  >
-                    <Sparkles className="h-8 w-8" />
-                    <span>All Services</span>
-                  </Badge>
+                  <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                      <Sparkles className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 text-center">All Services</span>
+                  </div>
                 </Link>
-                {categories?.slice(0, 8).map((category: any) => {
+                
+                {/* Category Items */}
+                {categories?.slice(0, 7).map((category: any) => {
                   const IconComponent = categoryIcons[category.name] || Sparkles;
                   return (
                     <Link key={category.id} href={`/services?category=${category.id}`}>
-                      <Badge 
-                        variant="secondary"
-                        className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 flex items-center space-x-4 px-6 py-4 bg-white hover:bg-red-500 hover:text-white cursor-pointer transition-all duration-200 shadow-lg border border-red-500/20 text-red-500 hover:border-red-500 font-semibold rounded-lg text-base pl-[10px] pr-[10px] ml-[5px] mr-[5px] mt-[7px] mb-[7px] text-justify"
-                      >
-                        <IconComponent className="h-8 w-8" />
-                        <span>{category.name}</span>
-                      </Badge>
+                      <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-red-100 transition-colors">
+                          <IconComponent className="h-8 w-8 text-gray-600 group-hover:text-red-600" />
+                        </div>
+                        <span className="text-sm font-medium text-gray-700 group-hover:text-red-600 text-center max-w-[80px] leading-tight">
+                          {category.name}
+                        </span>
+                      </div>
                     </Link>
                   );
                 })}
                 
-                {/* View All Categories */}
+                {/* View More */}
                 <Link href="/services">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-4 py-4 text-base font-medium rounded-lg"
-                  >
-                    <span>View All</span>
-                    <ArrowRight className="h-5 w-5" />
-                  </Button>
+                  <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                      <ArrowRight className="h-8 w-8 text-gray-600 group-hover:text-gray-800" />
+                    </div>
+                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-800 text-center">View More</span>
+                  </div>
                 </Link>
-              </div>
+              </>
             )}
           </div>
         </div>
