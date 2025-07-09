@@ -99,6 +99,7 @@ export const secureUserRegistrationSchema = z.object({
   email: z.string()
     .email('Please enter a valid email address')
     .max(255, 'Email must be less than 255 characters')
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid email format')
     .refine((val) => validateInput(val, 'Email') === null, 'Email contains invalid characters'),
   
   mobile: z.string()
@@ -108,8 +109,8 @@ export const secureUserRegistrationSchema = z.object({
   password: z.string()
     .min(8, 'Password must be at least 8 characters')
     .max(128, 'Password must be less than 128 characters')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 
-      'Password must contain uppercase, lowercase, number, and special character')
+    .regex(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d@$!%*?&.#_-]+$/, 
+      'Password must contain at least one letter and one number')
     .refine((val) => validateInput(val, 'Password') === null, 'Password contains invalid characters'),
   
   role: z.enum(['user', 'service_provider'], {
@@ -177,6 +178,7 @@ export const secureLoginSchema = z.object({
   email: z.string()
     .email('Please enter a valid email address')
     .max(255, 'Email must be less than 255 characters')
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid email format')
     .refine((val) => validateInput(val, 'Email') === null, 'Email contains invalid characters'),
   
   password: z.string()

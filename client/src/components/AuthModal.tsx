@@ -28,18 +28,87 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
 
+// Security validation functions
+const validateNoSQLInjection = (value: string): boolean => {
+  const sqlPatterns = [
+    /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)/i,
+    /(\b(OR|AND)\s+\d+\s*=\s*\d+)/i,
+    /(\b(OR|AND)\s+['"][\w\s]*['"])/i,
+    /(--|\/\*|\*\/)/,
+    /('|(\\')|('')|(\-\-)|(\;)|(\|)|(\*)|(\%)|(\<)|(\>)|(\()|(\))|(\[)|(\])|(\{)|(\}))/
+  ];
+  
+  return !sqlPatterns.some(pattern => pattern.test(value));
+};
+
+const validateNoScriptInjection = (value: string): boolean => {
+  const scriptPatterns = [
+    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+    /<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi,
+    /javascript:/gi,
+    /vbscript:/gi,
+    /onload\s*=/gi,
+    /onerror\s*=/gi,
+    /onclick\s*=/gi,
+    /onmouseover\s*=/gi,
+    /eval\s*\(/gi,
+    /alert\s*\(/gi,
+    /confirm\s*\(/gi,
+    /prompt\s*\(/gi,
+    /document\.cookie/gi,
+    /document\.write/gi,
+    /window\.location/gi,
+    /\.innerHTML/gi,
+    /\.outerHTML/gi
+  ];
+  
+  return !scriptPatterns.some(pattern => pattern.test(value));
+};
+
 const loginSchema = z.object({
-  identifier: z.string().min(1, 'Email or mobile is required'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  identifier: z.string()
+    .min(1, 'Email or mobile is required')
+    .max(255, 'Email/mobile must be less than 255 characters')
+    .regex(/^[a-zA-Z0-9@._+-]+$/, 'Email/mobile contains invalid characters')
+    .refine(validateNoSQLInjection, 'Invalid characters detected')
+    .refine(validateNoScriptInjection, 'Invalid characters detected'),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(128, 'Password must be less than 128 characters')
+    .regex(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d@$!%*?&.#_-]+$/, 'Password must contain at least one letter and one number')
+    .refine(validateNoSQLInjection, 'Invalid characters detected')
+    .refine(validateNoScriptInjection, 'Invalid characters detected'),
   rememberMe: z.boolean().optional(),
 });
 
 const registerSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
-  mobile: z.string().min(8, 'Mobile number must be at least 8 digits'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string().min(6, 'Confirm password is required'),
+  name: z.string()
+    .min(2, 'Name must be at least 2 characters')
+    .max(50, 'Name must be less than 50 characters')
+    .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces')
+    .refine(validateNoSQLInjection, 'Invalid characters detected')
+    .refine(validateNoScriptInjection, 'Invalid characters detected'),
+  email: z.string()
+    .email('Please enter a valid email address')
+    .max(255, 'Email must be less than 255 characters')
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid email format')
+    .refine(validateNoSQLInjection, 'Invalid characters detected')
+    .refine(validateNoScriptInjection, 'Invalid characters detected'),
+  mobile: z.string()
+    .min(8, 'Mobile number must be at least 8 digits')
+    .max(15, 'Mobile number must be less than 15 digits')
+    .regex(/^\+?[1-9]\d{7,14}$/, 'Please enter a valid mobile number')
+    .refine(validateNoSQLInjection, 'Invalid characters detected')
+    .refine(validateNoScriptInjection, 'Invalid characters detected'),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(128, 'Password must be less than 128 characters')
+    .regex(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d@$!%*?&.#_-]+$/, 'Password must contain at least one letter and one number')
+    .refine(validateNoSQLInjection, 'Invalid characters detected')
+    .refine(validateNoScriptInjection, 'Invalid characters detected'),
+  confirmPassword: z.string()
+    .min(8, 'Confirm password is required')
+    .max(128, 'Password must be less than 128 characters'),
   role: z.enum(['user', 'employee']).default('user'),
   rememberMe: z.boolean().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -48,9 +117,16 @@ const registerSchema = z.object({
 });
 
 const otpSchema = z.object({
-  identifier: z.string().min(1, 'Email or mobile is required'),
+  identifier: z.string()
+    .min(1, 'Email or mobile is required')
+    .max(255, 'Email/mobile must be less than 255 characters')
+    .regex(/^[a-zA-Z0-9@._+-]+$/, 'Email/mobile contains invalid characters')
+    .refine(validateNoSQLInjection, 'Invalid characters detected')
+    .refine(validateNoScriptInjection, 'Invalid characters detected'),
   type: z.enum(['email', 'mobile']),
-  code: z.string().length(6, 'OTP must be 6 digits'),
+  code: z.string()
+    .length(6, 'OTP must be 6 digits')
+    .regex(/^\d{6}$/, 'OTP must contain only numbers'),
 });
 
 interface AuthModalProps {
