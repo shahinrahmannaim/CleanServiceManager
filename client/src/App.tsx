@@ -14,6 +14,9 @@ import Profile from "@/pages/Profile";
 import Bookings from "@/pages/Bookings";
 import Favorites from "@/pages/Favorites";
 import Cart from "@/pages/Cart";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import ForgotPassword from "@/pages/ForgotPassword";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminUsers from "@/pages/admin/Users";
 import AdminServices from "@/pages/admin/Services";
@@ -33,6 +36,9 @@ function Router() {
       <Route path="/services/:id" component={ServiceDetails} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+      <Route path="/forgot-password" component={ForgotPassword} />
       
       <Route path="/profile">
         <ProtectedRoute>
