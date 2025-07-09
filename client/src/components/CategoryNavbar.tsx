@@ -80,7 +80,7 @@ export default function CategoryNavbar() {
                     <span>All Services</span>
                   </Badge>
                 </Link>
-                {categories?.slice(0, 6).map((category: any) => {
+                {categories?.slice(0, 8).map((category: any) => {
                   const IconComponent = categoryIcons[category.name] || Sparkles;
                   return (
                     <Link key={category.id} href={`/services?category=${category.id}`}>

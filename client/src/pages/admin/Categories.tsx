@@ -1,51 +1,76 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { apiRequest } from '../../lib/queryClient';
+import { apiRequest } from '@/lib/queryClient';
+import { queryClient } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Search, Plus, Edit, Trash2, Folder, Tag } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Search, 
+  Filter,
+  Home,
+  Building2,
+  Car,
+  Sofa,
+  Shirt,
+  Droplets,
+  Sparkles
+} from 'lucide-react';
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Category name is required'),
   description: z.string().optional(),
-  image: z.string().optional(),
-  isActive: z.boolean(),
+  isActive: z.boolean().default(true),
 });
 
-export default function AdminCategories() {
+const categoryIcons: { [key: string]: any } = {
+  'House Cleaning': Home,
+  'Office Cleaning': Building2,
+  'Car Cleaning': Car,
+  'Carpet Cleaning': Sofa,
+  'Laundry Services': Shirt,
+  'Deep Cleaning': Droplets,
+  'Window Cleaning': Sparkles,
+};
+
+export default function Categories() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const { data: categories, isLoading } = useQuery({
     queryKey: ['/api/categories'],
   });
 
-  const { data: services } = useQuery({
-    queryKey: ['/api/services'],
-  });
-
-  const categoryForm = useForm<z.infer<typeof categorySchema>>({
+  const createForm = useForm({
     resolver: zodResolver(categorySchema),
     defaultValues: {
       name: '',
       description: '',
-      image: '',
+      isActive: true,
+    },
+  });
+
+  const editForm = useForm({
+    resolver: zodResolver(categorySchema),
+    defaultValues: {
+      name: '',
+      description: '',
       isActive: true,
     },
   });
@@ -55,18 +80,19 @@ export default function AdminCategories() {
       apiRequest('POST', '/api/categories', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories/active'] });
       setIsCreateModalOpen(false);
-      categoryForm.reset();
+      createForm.reset();
       toast({
-        title: "Category created",
-        description: "New category has been created successfully.",
+        title: 'Success',
+        description: 'Category created successfully.',
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Creation failed",
-        description: error.message || "Failed to create category.",
-        variant: "destructive",
+        title: 'Error',
+        description: error.message || 'Failed to create category.',
+        variant: 'destructive',
       });
     },
   });
@@ -76,18 +102,20 @@ export default function AdminCategories() {
       apiRequest('PUT', `/api/categories/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories/active'] });
       setIsEditModalOpen(false);
       setSelectedCategory(null);
+      editForm.reset();
       toast({
-        title: "Category updated",
-        description: "Category has been updated successfully.",
+        title: 'Success',
+        description: 'Category updated successfully.',
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Update failed",
-        description: error.message || "Failed to update category.",
-        variant: "destructive",
+        title: 'Error',
+        description: error.message || 'Failed to update category.',
+        variant: 'destructive',
       });
     },
   });
@@ -96,16 +124,17 @@ export default function AdminCategories() {
     mutationFn: (id: number) => apiRequest('DELETE', `/api/categories/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/categories'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/categories/active'] });
       toast({
-        title: "Category deleted",
-        description: "Category has been deleted successfully.",
+        title: 'Success',
+        description: 'Category deleted successfully.',
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Delete failed",
-        description: error.message || "Failed to delete category.",
-        variant: "destructive",
+        title: 'Error',
+        description: error.message || 'Failed to delete category.',
+        variant: 'destructive',
       });
     },
   });
@@ -116,10 +145,9 @@ export default function AdminCategories() {
 
   const handleEditCategory = (category: any) => {
     setSelectedCategory(category);
-    categoryForm.reset({
+    editForm.reset({
       name: category.name,
       description: category.description || '',
-      image: category.image || '',
       isActive: category.isActive,
     });
     setIsEditModalOpen(true);
@@ -131,74 +159,38 @@ export default function AdminCategories() {
     }
   };
 
-  const handleDeleteCategory = (id: number, name: string) => {
-    const categoryServices = services?.filter((service: any) => service.categoryId === id);
-    if (categoryServices?.length > 0) {
-      toast({
-        title: "Cannot delete category",
-        description: `This category has ${categoryServices.length} services. Please move or delete them first.`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
-      deleteCategoryMutation.mutate(id);
+  const handleDeleteCategory = (category: any) => {
+    if (confirm(`Are you sure you want to delete "${category.name}"?`)) {
+      deleteCategoryMutation.mutate(category.id);
     }
   };
 
-  const getStatusColor = (isActive: boolean) => {
-    return isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
-  };
-
-  const filteredCategories = categories?.filter((category: any) => {
-    const matchesSearch = !searchQuery || 
-      category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (category.description && category.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    return matchesSearch;
-  }) || [];
-
-  const getServiceCount = (categoryId: number) => {
-    return services?.filter((service: any) => service.categoryId === categoryId).length || 0;
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-300 rounded w-48 mb-6"></div>
-            <div className="h-64 bg-gray-300 rounded-lg"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const filteredCategories = categories?.filter((category: any) =>
+    category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    category.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Category Management</h1>
-              <p className="text-gray-600">Organize services into categories</p>
-            </div>
-            <Button
-              onClick={() => setIsCreateModalOpen(true)}
-              className="btn-primary flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Add Category
-            </Button>
-          </div>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
+          <p className="text-gray-600">Manage service categories</p>
         </div>
+        <Button
+          onClick={() => setIsCreateModalOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Category
+        </Button>
+      </div>
 
-        {/* Search */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="relative">
+      {/* Search and Filters */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-4">
+            <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
                 placeholder="Search categories..."
@@ -207,107 +199,68 @@ export default function AdminCategories() {
                 className="pl-10"
               />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Categories Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Folder className="h-8 w-8 text-primary mr-3" />
-                <div>
-                  <p className="text-sm text-gray-600">Total Categories</p>
-                  <p className="text-2xl font-bold">{categories?.length || 0}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Folder className="h-8 w-8 text-green-500 mr-3" />
-                <div>
-                  <p className="text-sm text-gray-600">Active Categories</p>
-                  <p className="text-2xl font-bold">
-                    {categories?.filter((c: any) => c.isActive).length || 0}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center">
-                <Tag className="h-8 w-8 text-blue-500 mr-3" />
-                <div>
-                  <p className="text-sm text-gray-600">Total Services</p>
-                  <p className="text-2xl font-bold">{services?.length || 0}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Categories Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Categories ({filteredCategories.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
+      {/* Categories Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Categories ({filteredCategories.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
                   <TableRow>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Services</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableCell colSpan={5} className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredCategories.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8">
-                        <Folder className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                        <p className="text-gray-500">No categories found</p>
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredCategories.map((category: any) => (
+                ) : filteredCategories.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                      No categories found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredCategories.map((category: any) => {
+                    const IconComponent = categoryIcons[category.name] || Sparkles;
+                    return (
                       <TableRow key={category.id}>
                         <TableCell>
                           <div className="flex items-center space-x-3">
-                            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                              <Folder className="w-6 h-6 text-primary" />
-                            </div>
-                            <div>
-                              <p className="font-medium">{category.name}</p>
-                              <p className="text-sm text-gray-600">
-                                Created {new Date(category.createdAt).toLocaleDateString()}
-                              </p>
-                            </div>
+                            <IconComponent className="h-5 w-5 text-blue-600" />
+                            <span className="font-medium">{category.name}</span>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <p className="text-sm text-gray-600 max-w-xs line-clamp-2">
+                          <span className="text-gray-600">
                             {category.description || 'No description'}
-                          </p>
+                          </span>
                         </TableCell>
                         <TableCell>
-                          <div className="flex items-center">
-                            <Tag className="w-4 h-4 mr-1 text-gray-400" />
-                            <span className="font-medium">{getServiceCount(category.id)}</span>
-                            <span className="text-gray-500 ml-1">services</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={getStatusColor(category.isActive)}>
+                          <Badge 
+                            variant={category.isActive ? 'default' : 'secondary'}
+                            className={category.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
+                          >
                             {category.isActive ? 'Active' : 'Inactive'}
                           </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm text-gray-500">
+                            {new Date(category.createdAt).toLocaleDateString()}
+                          </span>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
@@ -316,45 +269,128 @@ export default function AdminCategories() {
                               size="sm"
                               onClick={() => handleEditCategory(category)}
                             >
-                              <Edit className="w-4 h-4" />
+                              <Edit className="w-4 h-4 mr-1" />
+                              Edit
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleDeleteCategory(category.id, category.name)}
+                              onClick={() => handleDeleteCategory(category)}
                               className="text-red-600 hover:text-red-700"
-                              disabled={getServiceCount(category.id) > 0}
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Delete
                             </Button>
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Create Category Modal */}
-        <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create New Category</DialogTitle>
-            </DialogHeader>
-            
-            <Form {...categoryForm}>
-              <form onSubmit={categoryForm.handleSubmit(handleCreateCategory)} className="space-y-4">
+      {/* Create Category Modal */}
+      <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Category</DialogTitle>
+            <DialogDescription>
+              Add a new service category to organize your services.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...createForm}>
+            <form onSubmit={createForm.handleSubmit(handleCreateCategory)} className="space-y-4">
+              <FormField
+                control={createForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g., Home Cleaning" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={createForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} placeholder="Brief description of the category" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={createForm.control}
+                name="isActive"
+                render={({ field }) => (
+                  <FormItem className="flex items-center justify-between">
+                    <FormLabel>Active</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsCreateModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createCategoryMutation.isPending}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  {createCategoryMutation.isPending ? 'Creating...' : 'Create Category'}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Category Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Category</DialogTitle>
+            <DialogDescription>
+              Update category information and settings.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedCategory && (
+            <Form {...editForm}>
+              <form onSubmit={editForm.handleSubmit(handleUpdateCategory)} className="space-y-4">
                 <FormField
-                  control={categoryForm.control}
+                  control={editForm.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Home Cleaning" {...field} />
+                        <Input {...field} placeholder="e.g., Home Cleaning" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -362,16 +398,13 @@ export default function AdminCategories() {
                 />
 
                 <FormField
-                  control={categoryForm.control}
+                  control={editForm.control}
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description (Optional)</FormLabel>
+                      <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Describe this category..."
-                          {...field} 
-                        />
+                        <Textarea {...field} placeholder="Brief description of the category" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -379,109 +412,7 @@ export default function AdminCategories() {
                 />
 
                 <FormField
-                  control={categoryForm.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image URL (Optional)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://example.com/image.jpg" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={categoryForm.control}
-                  name="isActive"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center justify-between">
-                      <FormLabel>Active</FormLabel>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex justify-end space-x-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsCreateModalOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={createCategoryMutation.isPending}
-                    className="btn-primary"
-                  >
-                    {createCategoryMutation.isPending ? 'Creating...' : 'Create Category'}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-
-        {/* Edit Category Modal */}
-        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Category</DialogTitle>
-            </DialogHeader>
-            
-            <Form {...categoryForm}>
-              <form onSubmit={categoryForm.handleSubmit(handleUpdateCategory)} className="space-y-4">
-                <FormField
-                  control={categoryForm.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category Name</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={categoryForm.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={categoryForm.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image URL (Optional)</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={categoryForm.control}
+                  control={editForm.control}
                   name="isActive"
                   render={({ field }) => (
                     <FormItem className="flex items-center justify-between">
@@ -507,16 +438,16 @@ export default function AdminCategories() {
                   <Button
                     type="submit"
                     disabled={updateCategoryMutation.isPending}
-                    className="btn-primary"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
                   >
                     {updateCategoryMutation.isPending ? 'Updating...' : 'Update Category'}
                   </Button>
                 </div>
               </form>
             </Form>
-          </DialogContent>
-        </Dialog>
-      </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
