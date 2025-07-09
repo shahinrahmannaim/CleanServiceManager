@@ -27,13 +27,13 @@ import {
   ChevronDown,
   LogOut 
 } from 'lucide-react';
-import AuthModal from './AuthModal';
+
 import { logout } from '../lib/auth';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Navbar() {
   const [location, navigate] = useLocation();
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, setUser } = useAuth();
   const { toast } = useToast();
@@ -102,6 +102,12 @@ export default function Navbar() {
                 src="/logo.jpeg" 
                 alt="Panaroma Cleaning Services" 
                 className="h-10 w-10 rounded-full object-cover mr-3"
+                onError={(e) => {
+                  // Fallback to SVG logo if JPEG fails
+                  const target = e.target as HTMLImageElement;
+                  target.src = "/logo.svg";
+                  target.className = "h-10 w-10 rounded-lg object-cover mr-3";
+                }}
               />
               <span className="text-xl font-bold text-blue-600">Panaroma</span>
             </Link>
@@ -167,14 +173,14 @@ export default function Navbar() {
                       <User className="h-4 w-4 mr-2" />
                       My Bookings
                     </DropdownMenuItem>
-                    {user.role === 'admin' && (
-                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                    {(user.role === 'admin' || user.role === 'superadmin') && (
+                      <DropdownMenuItem onClick={() => navigate('/admin/dashboard')}>
                         <Shield className="h-4 w-4 mr-2" />
                         Admin Panel
                       </DropdownMenuItem>
                     )}
                     {user.role === 'employee' && (
-                      <DropdownMenuItem onClick={() => navigate('/employee')}>
+                      <DropdownMenuItem onClick={() => navigate('/employee/time-tracker')}>
                         <Shield className="h-4 w-4 mr-2" />
                         Employee Dashboard
                       </DropdownMenuItem>
@@ -195,10 +201,10 @@ export default function Navbar() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setIsAuthModalOpen(true)}>
+                    <DropdownMenuItem onClick={() => navigate('/login')}>
                       Login
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setIsAuthModalOpen(true)}>
+                    <DropdownMenuItem onClick={() => navigate('/register')}>
                       Join Us
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -310,7 +316,7 @@ export default function Navbar() {
                     <div className="space-y-2">
                       <Button
                         onClick={() => {
-                          setIsAuthModalOpen(true);
+                          navigate('/login');
                           setIsMobileMenuOpen(false);
                         }}
                         variant="ghost"
@@ -320,7 +326,7 @@ export default function Navbar() {
                       </Button>
                       <Button
                         onClick={() => {
-                          setIsAuthModalOpen(true);
+                          navigate('/register');
                           setIsMobileMenuOpen(false);
                         }}
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white"
@@ -336,10 +342,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-      />
+
     </>
   );
 }

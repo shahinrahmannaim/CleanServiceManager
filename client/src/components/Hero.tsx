@@ -29,8 +29,17 @@ export default function Hero() {
   };
 
   return (
-    <section className="hero-bg text-white py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section 
+      className="relative text-white py-20"
+      style={{
+        backgroundImage: 'linear-gradient(135deg, hsl(225, 73%, 30%) 0%, hsl(225, 73%, 50%) 100%)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
+      <div className="absolute inset-0 bg-black/20"></div>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-shadow fade-in">
             Professional Cleaning Services in Qatar

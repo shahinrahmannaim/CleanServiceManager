@@ -1,4 +1,5 @@
 import Navbar from './Navbar';
+import CategoryNavbar from './CategoryNavbar';
 import Footer from './Footer';
 import ChatBot from './ChatBot';
 
@@ -10,6 +11,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+      <CategoryNavbar />
       <main className="flex-1">
         {children}
       </main>
