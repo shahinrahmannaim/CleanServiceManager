@@ -26,10 +26,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
+import { FaGoogle, FaFacebook } from 'react-icons/fa';
 
 const loginSchema = z.object({
   identifier: z.string().min(1, 'Email or mobile is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
+  rememberMe: z.boolean().optional(),
 });
 
 const registerSchema = z.object({
@@ -39,6 +41,7 @@ const registerSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
   confirmPassword: z.string().min(6, 'Confirm password is required'),
   role: z.enum(['user', 'employee']).default('user'),
+  rememberMe: z.boolean().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],
@@ -69,6 +72,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     defaultValues: {
       identifier: '',
       password: '',
+      rememberMe: false,
     },
   });
 
@@ -81,6 +85,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       password: '',
       confirmPassword: '',
       role: 'user',
+      rememberMe: false,
     },
   });
 
@@ -383,7 +388,27 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     )}
                   />
 
-                  <div className="text-right">
+                  <div className="flex items-center justify-between">
+                    <FormField
+                      control={loginForm.control}
+                      name="rememberMe"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel className="text-sm text-gray-600">
+                              Remember me
+                            </FormLabel>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    
                     <Button
                       type="button"
                       variant="ghost"
@@ -401,6 +426,34 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   >
                     {loginMutation.isPending ? "Signing in..." : "Sign In"}
                   </Button>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-gray-300" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-10 border-2 border-gray-200 hover:bg-gray-50"
+                    >
+                      <FaGoogle className="w-4 h-4 mr-2 text-red-500" />
+                      Google
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-10 border-2 border-gray-200 hover:bg-gray-50"
+                    >
+                      <FaFacebook className="w-4 h-4 mr-2 text-blue-600" />
+                      Facebook
+                    </Button>
+                  </div>
                 </form>
               </Form>
             </TabsContent>
@@ -560,6 +613,26 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     )}
                   />
 
+                  <FormField
+                    control={registerForm.control}
+                    name="rememberMe"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel className="text-sm text-gray-600">
+                            Remember me and keep me signed in
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
                   <Button
                     type="submit"
                     disabled={registerMutation.isPending}
@@ -567,6 +640,34 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   >
                     {registerMutation.isPending ? 'Creating Account...' : 'Create Account'}
                   </Button>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-gray-300" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-10 border-2 border-gray-200 hover:bg-gray-50"
+                    >
+                      <FaGoogle className="w-4 h-4 mr-2 text-red-500" />
+                      Google
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-10 border-2 border-gray-200 hover:bg-gray-50"
+                    >
+                      <FaFacebook className="w-4 h-4 mr-2 text-blue-600" />
+                      Facebook
+                    </Button>
+                  </div>
                 </form>
               </Form>
             </TabsContent>
