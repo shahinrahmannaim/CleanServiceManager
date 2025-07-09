@@ -49,7 +49,7 @@ export default function CategoryNavbar() {
           <div className="flex items-center space-x-2 text-sm text-gray-700">
             <Link href="/">
               <Button variant="ghost" size="sm" className="p-3 h-auto hover:bg-blue-100">
-                <Home className="h-6 w-6" />
+                <Home className="h-8 w-8" />
               </Button>
             </Link>
             <ChevronRight className="h-5 w-5 text-gray-400" />
@@ -78,9 +78,9 @@ export default function CategoryNavbar() {
                 <Link href="/services">
                   <Badge 
                     variant={location === '/services' ? 'default' : 'secondary'}
-                    className="flex items-center space-x-3 px-6 py-4 bg-white hover:bg-blue-600 hover:text-white cursor-pointer transition-all duration-200 shadow-lg border border-blue-600/20 text-blue-600 hover:border-blue-600 text-base font-semibold rounded-lg"
+                    className="flex items-center space-x-4 px-6 py-4 bg-white hover:bg-blue-600 hover:text-white cursor-pointer transition-all duration-200 shadow-lg border border-blue-600/20 text-blue-600 hover:border-blue-600 text-base font-semibold rounded-lg"
                   >
-                    <Sparkles className="h-6 w-6" />
+                    <Sparkles className="h-8 w-8" />
                     <span>All Services</span>
                   </Badge>
                 </Link>
@@ -90,9 +90,9 @@ export default function CategoryNavbar() {
                     <Link key={category.id} href={`/services?category=${category.id}`}>
                       <Badge 
                         variant="secondary"
-                        className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 flex items-center space-x-3 px-6 py-4 bg-white hover:bg-red-500 hover:text-white cursor-pointer transition-all duration-200 shadow-lg border border-red-500/20 text-red-500 hover:border-red-500 font-semibold rounded-lg text-base pl-[10px] pr-[10px] ml-[5px] mr-[5px] mt-[7px] mb-[7px] text-justify"
+                        className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 flex items-center space-x-4 px-6 py-4 bg-white hover:bg-red-500 hover:text-white cursor-pointer transition-all duration-200 shadow-lg border border-red-500/20 text-red-500 hover:border-red-500 font-semibold rounded-lg text-base pl-[10px] pr-[10px] ml-[5px] mr-[5px] mt-[7px] mb-[7px] text-justify"
                       >
-                        <IconComponent className="h-6 w-6" />
+                        <IconComponent className="h-8 w-8" />
                         <span>{category.name}</span>
                       </Badge>
                     </Link>
