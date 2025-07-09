@@ -71,8 +71,10 @@ export default function Navbar() {
   return (
     <>
       {/* Top Contact Bar */}
-      <div className="bg-blue-600 text-white py-2 text-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+      <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white py-2 text-sm relative overflow-hidden">
+        {/* Background overlay similar to hero section */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/95 via-blue-800/90 to-blue-700/95"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div className="flex items-center space-x-6">
             <div className="flex items-center">
               <Phone className="h-4 w-4 mr-2" />
@@ -84,10 +86,10 @@ export default function Navbar() {
             </div>
           </div>
           <div className="hidden md:flex items-center space-x-3">
-            <Facebook className="h-4 w-4 hover:text-blue-300 cursor-pointer" />
-            <Twitter className="h-4 w-4 hover:text-blue-300 cursor-pointer" />
-            <Linkedin className="h-4 w-4 hover:text-blue-300 cursor-pointer" />
-            <Instagram className="h-4 w-4 hover:text-blue-300 cursor-pointer" />
+            <Facebook className="h-4 w-4 hover:text-blue-300 cursor-pointer transition-colors" />
+            <Twitter className="h-4 w-4 hover:text-blue-300 cursor-pointer transition-colors" />
+            <Linkedin className="h-4 w-4 hover:text-blue-300 cursor-pointer transition-colors" />
+            <Instagram className="h-4 w-4 hover:text-blue-300 cursor-pointer transition-colors" />
           </div>
         </div>
       </div>

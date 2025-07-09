@@ -50,7 +50,7 @@ export default function CategoryNavbar() {
             </Link>
             <ChevronRight className="h-4 w-4 text-gray-400" />
             <span className="capitalize font-medium">
-              {location === '/' ? 'Home' : 
+              {location === '/' ? '' : 
                location === '/services' ? 'Services' : 
                location === '/about' ? 'About' : 
                location === '/contact' ? 'Contact' : 
@@ -74,19 +74,19 @@ export default function CategoryNavbar() {
                 <Link href="/services">
                   <Badge 
                     variant={location === '/services' ? 'default' : 'secondary'}
-                    className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-primary hover:text-white cursor-pointer transition-all duration-200 shadow-md border border-primary/20 text-primary hover:border-primary text-sm font-medium"
+                    className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-blue-600 hover:text-white cursor-pointer transition-all duration-200 shadow-md border border-blue-600/20 text-blue-600 hover:border-blue-600 text-sm font-medium"
                   >
                     <Sparkles className="h-4 w-4" />
                     <span>All Services</span>
                   </Badge>
                 </Link>
-                {categories?.slice(0, 4).map((category: any) => {
+                {categories?.slice(0, 6).map((category: any) => {
                   const IconComponent = categoryIcons[category.name] || Sparkles;
                   return (
                     <Link key={category.id} href={`/services?category=${category.id}`}>
                       <Badge 
                         variant="secondary"
-                        className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-accent hover:text-white cursor-pointer transition-all duration-200 shadow-md border border-accent/20 text-accent hover:border-accent text-sm font-medium"
+                        className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-red-500 hover:text-white cursor-pointer transition-all duration-200 shadow-md border border-red-500/20 text-red-500 hover:border-red-500 text-sm font-medium"
                       >
                         <IconComponent className="h-4 w-4" />
                         <span>{category.name}</span>

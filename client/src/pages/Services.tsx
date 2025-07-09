@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import ServiceCard from '@/components/ServiceCard';
@@ -22,6 +22,12 @@ export default function Services() {
   const urlParams = new URLSearchParams(location.split('?')[1] || '');
   const initialCity = urlParams.get('city') || '';
   const initialCategory = urlParams.get('category') || '';
+
+  // Initialize filters from URL parameters
+  useEffect(() => {
+    if (initialCity) setSelectedCity(initialCity);
+    if (initialCategory) setSelectedCategory(initialCategory);
+  }, [initialCity, initialCategory]);
 
   const { data: services, isLoading: servicesLoading } = useQuery({
     queryKey: ['/api/services', searchQuery, selectedCategory || initialCategory],
