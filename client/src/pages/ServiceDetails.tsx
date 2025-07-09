@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRoute } from 'wouter';
+import { useRoute, useLocation } from 'wouter';
 import { useAuth } from '../hooks/useAuth';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Heart, ShoppingCart, Star, Clock, MapPin, Calendar, User, Phone, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
+import AuthModal from '@/components/AuthModal';
 
 const cities = ['Doha', 'Al Rayyan', 'Al Wakrah', 'Umm Salal', 'Al Daayen', 'Lusail', 'West Bay'];
 
@@ -35,7 +36,9 @@ export default function ServiceDetails() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
 
@@ -137,11 +140,7 @@ export default function ServiceDetails() {
 
   const handleFavoriteClick = () => {
     if (!user) {
-      toast({
-        title: "Login required",
-        description: "Please login to add favorites",
-        variant: "destructive",
-      });
+      setIsAuthModalOpen(true);
       return;
     }
     favoriteMutation.mutate();
@@ -149,14 +148,18 @@ export default function ServiceDetails() {
 
   const handleCartClick = () => {
     if (!user) {
-      toast({
-        title: "Login required",
-        description: "Please login to add items to cart",
-        variant: "destructive",
-      });
+      setIsAuthModalOpen(true);
       return;
     }
     cartMutation.mutate();
+  };
+
+  const handleBookingClick = () => {
+    if (!user) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    setIsBookingModalOpen(true);
   };
 
   if (isLoading) {
@@ -332,12 +335,17 @@ export default function ServiceDetails() {
 
                 <Separator />
 
+                <Button 
+                  onClick={handleBookingClick}
+                  className="w-full btn-accent text-lg py-3"
+                >
+                  <Calendar className="w-5 h-5 mr-2" />
+                  Book Now
+                </Button>
+
                 <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
                   <DialogTrigger asChild>
-                    <Button className="w-full btn-accent text-lg py-3">
-                      <Calendar className="w-5 h-5 mr-2" />
-                      Book Now
-                    </Button>
+                    <div style={{ display: 'none' }} />
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
@@ -456,6 +464,11 @@ export default function ServiceDetails() {
           </div>
         </div>
       </div>
+      
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </div>
   );
 }
