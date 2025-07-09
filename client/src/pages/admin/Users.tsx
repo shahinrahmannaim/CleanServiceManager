@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
@@ -55,15 +55,17 @@ export default function AdminUsers() {
       queryClient.invalidateQueries({ queryKey: ['/api/users'] });
       setIsEditModalOpen(false);
       setSelectedUser(null);
+      userForm.reset();
       toast({
         title: "User updated",
         description: "User information has been updated successfully.",
       });
     },
     onError: (error: any) => {
+      console.error("Update user error:", error);
       toast({
         title: "Update failed",
-        description: error.message || "Failed to update user.",
+        description: error.message || "Failed to update user. Please try again.",
         variant: "destructive",
       });
     },
@@ -76,7 +78,7 @@ export default function AdminUsers() {
       email: user.email,
       mobile: user.mobile,
       role: user.role,
-      isVerifiedProvider: user.isVerifiedProvider,
+      isVerifiedProvider: user.isVerifiedProvider || false,
     });
     setIsEditModalOpen(true);
   };
@@ -340,6 +342,9 @@ export default function AdminUsers() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Edit User</DialogTitle>
+              <DialogDescription>
+                Update user information and permissions.
+              </DialogDescription>
             </DialogHeader>
             
             {selectedUser && (
@@ -438,7 +443,7 @@ export default function AdminUsers() {
                     <Button
                       type="submit"
                       disabled={updateUserMutation.isPending}
-                      className="btn-primary"
+                      className="bg-primary hover:bg-primary/90 text-white"
                     >
                       {updateUserMutation.isPending ? 'Updating...' : 'Update User'}
                     </Button>

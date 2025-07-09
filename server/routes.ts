@@ -573,10 +573,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/users/:id", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
     try {
-      const user = await storage.updateUser(parseInt(req.params.id), req.body);
+      const userId = parseInt(req.params.id);
+      const { name, email, mobile, role, isVerifiedProvider, isEmailVerified, isMobileVerified } = req.body;
+      
+      // Validate required fields
+      if (!name || !email || !mobile || !role) {
+        return res.status(400).json({ message: "Name, email, mobile, and role are required" });
+      }
+      
+      // Validate role
+      if (!['user', 'employee', 'admin', 'superadmin'].includes(role)) {
+        return res.status(400).json({ message: "Invalid role specified" });
+      }
+      
+      // Check if user exists
+      const existingUser = await storage.getUser(userId);
+      if (!existingUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Check for email uniqueness (except for current user)
+      const emailUser = await storage.getUserByEmail(email);
+      if (emailUser && emailUser.id !== userId) {
+        return res.status(400).json({ message: "Email already in use by another user" });
+      }
+      
+      // Prepare update data
+      const updateData: any = {
+        name,
+        email,
+        mobile,
+        role,
+        isVerifiedProvider: isVerifiedProvider || false,
+        isEmailVerified: isEmailVerified || false,
+        isMobileVerified: isMobileVerified || false,
+        updatedAt: new Date()
+      };
+      
+      const user = await storage.updateUser(userId, updateData);
       res.json(user);
     } catch (error) {
+      console.error("Update user error:", error);
       res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  app.delete("/api/users/:id", authenticate, authorize(['superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      
+      // Check if user exists
+      const existingUser = await storage.getUser(userId);
+      if (!existingUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Prevent deletion of current user
+      if (userId === req.user!.id) {
+        return res.status(400).json({ message: "Cannot delete your own account" });
+      }
+      
+      // Delete user (Note: this should cascade delete related data)
+      await storage.deleteUser(userId);
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Delete user error:", error);
+      res.status(500).json({ message: "Failed to delete user" });
     }
   });
 
