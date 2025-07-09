@@ -1,71 +1,78 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'wouter';
-import { useAuth } from '../hooks/useAuth';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
-import { 
-  Heart, 
-  ShoppingCart, 
-  User, 
-  Menu, 
-  X, 
-  Phone, 
-  Mail, 
-  Facebook, 
-  Twitter, 
-  Instagram, 
-  Linkedin, 
-  Search, 
-  Shield, 
-  ChevronDown,
-  LogOut 
-} from 'lucide-react';
-import AuthModal from './AuthModal';
-import { logout } from '../lib/auth';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Menu, X, User, LogOut, ChevronDown, Phone, Mail, Facebook, Twitter, Instagram, Linkedin, Search, Shield } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { authService } from "@/lib/auth.js";
+import logoImage from "@assets/WhatsApp Image 2025-06-23 at 09.05.23_1750847082310.jpeg";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
 
 export default function Navbar() {
   const [location, navigate] = useLocation();
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, setUser } = useAuth();
-  const { toast } = useToast();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState(authService.getStoredUser());
 
-  const { data: cartCount } = useQuery({
-    queryKey: ['/api/cart'],
-    enabled: !!user,
-  });
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const currentUser = await authService.getCurrentUser();
+        setUser(currentUser);
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        setUser(null);
+      }
+    };
+    checkUser();
+  }, []);
+
+  // Listen for authentication changes
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const storedUser = authService.getStoredUser();
+      setUser(storedUser);
+    };
+
+    // Listen for custom auth events
+    window.addEventListener('auth-change', handleAuthChange);
+    
+    return () => {
+      window.removeEventListener('auth-change', handleAuthChange);
+    };
+  }, []);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const { toast } = useToast();
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await authService.logout();
       setUser(null);
-      navigate('/');
+      navigate("/");
       toast({
         title: "Goodbye!",
         description: "You have been logged out successfully.",
       });
     } catch (error) {
+      console.error("Logout failed:", error);
+      // Clear user state even if logout request fails
+      setUser(null);
+      navigate("/");
       toast({
-        title: "Logout failed",
-        description: "There was an error logging out. Please try again.",
-        variant: "destructive",
+        title: "Logged out",
+        description: "You have been logged out.",
       });
     }
   };
 
   const navItems = [
-    { href: '/', label: 'Home' },
-    { href: '/services', label: 'Services' },
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact Us' },
+    { href: "/", label: "Home" },
+    { href: "/services", label: "Services" },
+    { href: "/providers", label: "Providers" },
+    { href: "/contact", label: "Contact Us" },
+    { href: "/blog", label: "Blog" }
   ];
 
   return (
@@ -76,14 +83,14 @@ export default function Navbar() {
           <div className="flex items-center space-x-6">
             <div className="flex items-center">
               <Phone className="h-4 w-4 mr-2" />
-              <span>+974 4444 5555</span>
+              <span>+1 (212) 595-1962</span>
             </div>
             <div className="flex items-center">
               <Mail className="h-4 w-4 mr-2" />
-              <span>info@panaroma.qa</span>
+              <span>info@example.com</span>
             </div>
           </div>
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="flex items-center space-x-3">
             <Facebook className="h-4 w-4 hover:text-blue-300 cursor-pointer" />
             <Twitter className="h-4 w-4 hover:text-blue-300 cursor-pointer" />
             <Linkedin className="h-4 w-4 hover:text-blue-300 cursor-pointer" />
@@ -99,11 +106,10 @@ export default function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <img 
-                src="/logo.jpeg" 
+                src={logoImage} 
                 alt="Panaroma Cleaning Services" 
-                className="h-10 w-10 rounded-full object-cover mr-3"
+                className="h-20 w-auto object-contain"
               />
-              <span className="text-xl font-bold text-blue-600">Panaroma</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -123,26 +129,6 @@ export default function Navbar() {
 
             {/* Search and Auth */}
             <div className="hidden md:flex items-center space-x-4">
-              {user && (
-                <>
-                  <Link href="/favorites">
-                    <Button variant="ghost" size="sm">
-                      <Heart className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Link href="/cart">
-                    <Button variant="ghost" size="sm" className="relative">
-                      <ShoppingCart className="h-4 w-4" />
-                      {cartCount && cartCount.length > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                          {cartCount.length}
-                        </span>
-                      )}
-                    </Button>
-                  </Link>
-                </>
-              )}
-
               <Link href="/services">
                 <Button variant="ghost" size="sm">
                   <Search className="h-4 w-4" />
@@ -154,29 +140,23 @@ export default function Navbar() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center space-x-2">
                       <User className="h-5 w-5" />
-                      <span>{user.name}</span>
+                      <span>{user.username}</span>
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => navigate('/profile')}>
+                    <DropdownMenuItem onClick={() => navigate("/profile")}>
                       <User className="h-4 w-4 mr-2" />
                       Profile
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/bookings')}>
+                    <DropdownMenuItem onClick={() => navigate("/dashboard")}>
                       <User className="h-4 w-4 mr-2" />
-                      My Bookings
+                      Dashboard
                     </DropdownMenuItem>
                     {user.role === 'admin' && (
-                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                      <DropdownMenuItem onClick={() => navigate("/admin")}>
                         <Shield className="h-4 w-4 mr-2" />
                         Admin Panel
-                      </DropdownMenuItem>
-                    )}
-                    {user.role === 'employee' && (
-                      <DropdownMenuItem onClick={() => navigate('/employee')}>
-                        <Shield className="h-4 w-4 mr-2" />
-                        Employee Dashboard
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem onClick={handleLogout}>
@@ -195,10 +175,10 @@ export default function Navbar() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setIsAuthModalOpen(true)}>
+                    <DropdownMenuItem onClick={() => setShowLoginModal(true)}>
                       Login
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setIsAuthModalOpen(true)}>
+                    <DropdownMenuItem onClick={() => setShowRegisterModal(true)}>
                       Join Us
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -209,18 +189,18 @@ export default function Navbar() {
             {/* Mobile menu button */}
             <div className="md:hidden">
               <Button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
                 variant="ghost"
                 size="sm"
                 className="text-gray-900"
               >
-                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
             </div>
           </div>
 
           {/* Mobile Navigation */}
-          {isMobileMenuOpen && (
+          {isMenuOpen && (
             <div className="md:hidden bg-white border-t border-gray-200">
               <div className="px-2 pt-2 pb-3 space-y-1">
                 {navItems.map((item) => (
@@ -232,7 +212,7 @@ export default function Navbar() {
                         ? "text-blue-600 bg-blue-50 font-bold"
                         : "text-gray-900 hover:text-blue-600 hover:bg-gray-50"
                     }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     {item.label}
                   </Link>
@@ -244,12 +224,12 @@ export default function Navbar() {
                     <div className="space-y-2">
                       <div className="flex items-center px-3 py-2">
                         <User className="h-5 w-5 mr-2" />
-                        <span className="text-sm font-medium">{user.name}</span>
+                        <span className="text-sm font-medium">{user.username}</span>
                       </div>
                       <Button
                         onClick={() => {
-                          navigate('/profile');
-                          setIsMobileMenuOpen(false);
+                          navigate("/profile");
+                          setIsMenuOpen(false);
                         }}
                         variant="ghost"
                         className="w-full justify-start text-gray-900 hover:text-blue-600"
@@ -259,45 +239,19 @@ export default function Navbar() {
                       </Button>
                       <Button
                         onClick={() => {
-                          navigate('/bookings');
-                          setIsMobileMenuOpen(false);
+                          navigate("/dashboard");
+                          setIsMenuOpen(false);
                         }}
                         variant="ghost"
                         className="w-full justify-start text-gray-900 hover:text-blue-600"
                       >
                         <User className="h-4 w-4 mr-2" />
-                        My Bookings
+                        Dashboard
                       </Button>
-                      {user && (
-                        <>
-                          <Button
-                            onClick={() => {
-                              navigate('/favorites');
-                              setIsMobileMenuOpen(false);
-                            }}
-                            variant="ghost"
-                            className="w-full justify-start text-gray-900 hover:text-blue-600"
-                          >
-                            <Heart className="h-4 w-4 mr-2" />
-                            Favorites
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              navigate('/cart');
-                              setIsMobileMenuOpen(false);
-                            }}
-                            variant="ghost"
-                            className="w-full justify-start text-gray-900 hover:text-blue-600"
-                          >
-                            <ShoppingCart className="h-4 w-4 mr-2" />
-                            Cart {cartCount && cartCount.length > 0 && `(${cartCount.length})`}
-                          </Button>
-                        </>
-                      )}
                       <Button
                         onClick={() => {
                           handleLogout();
-                          setIsMobileMenuOpen(false);
+                          setIsMenuOpen(false);
                         }}
                         variant="ghost"
                         className="w-full justify-start text-red-600 hover:text-red-700"
@@ -310,8 +264,8 @@ export default function Navbar() {
                     <div className="space-y-2">
                       <Button
                         onClick={() => {
-                          setIsAuthModalOpen(true);
-                          setIsMobileMenuOpen(false);
+                          setShowLoginModal(true);
+                          setIsMenuOpen(false);
                         }}
                         variant="ghost"
                         className="w-full justify-start text-gray-900 hover:text-blue-600"
@@ -320,8 +274,8 @@ export default function Navbar() {
                       </Button>
                       <Button
                         onClick={() => {
-                          setIsAuthModalOpen(true);
-                          setIsMobileMenuOpen(false);
+                          setShowRegisterModal(true);
+                          setIsMenuOpen(false);
                         }}
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                       >
@@ -336,10 +290,39 @@ export default function Navbar() {
         </div>
       </nav>
 
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-      />
+      {/* Login Modal */}
+      <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
+        <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-sm" aria-describedby="login-description">
+          <DialogTitle>Login to your account</DialogTitle>
+          <div id="login-description" className="sr-only">Sign in to your Panaroma account to access your bookings and services</div>
+          <Login onSuccess={async () => {
+            setShowLoginModal(false);
+            // Get the updated user from auth service
+            const currentUser = await authService.getCurrentUser();
+            setUser(currentUser);
+            toast({
+              title: "Welcome back!",
+              description: "You have been logged in successfully.",
+            });
+          }} />
+        </DialogContent>
+      </Dialog>
+
+      {/* Register Modal */}
+      <Dialog open={showRegisterModal} onOpenChange={setShowRegisterModal}>
+        <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-sm" aria-describedby="register-description">
+          <DialogTitle>Create new account</DialogTitle>
+          <div id="register-description" className="sr-only">Create your Panaroma account to access our cleaning services</div>
+          <Register onSuccess={() => {
+            setShowRegisterModal(false);
+            setShowLoginModal(true);
+            toast({
+              title: "Registration successful!",
+              description: "Please login with your new credentials.",
+            });
+          }} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
