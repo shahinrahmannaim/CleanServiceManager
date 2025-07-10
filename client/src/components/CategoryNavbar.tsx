@@ -41,6 +41,19 @@ export default function CategoryNavbar() {
     return null;
   }
 
+  // Get current category from URL
+  const getCurrentCategory = () => {
+    const pathParts = location.split('/');
+    if (pathParts.length === 3 && pathParts[1] === 'services' && pathParts[2]) {
+      const categorySlug = pathParts[2];
+      return categorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+    return null;
+  };
+
+  const currentCategory = getCurrentCategory();
+  const isAllServicesActive = location === '/services';
+
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,10 +77,18 @@ export default function CategoryNavbar() {
                 {/* All Services */}
                 <Link href="/services">
                   <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
-                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                      <Sparkles className="h-8 w-8 text-blue-600" />
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
+                      isAllServicesActive 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-blue-100 text-blue-600 group-hover:bg-blue-200'
+                    }`}>
+                      <Sparkles className="h-8 w-8" />
                     </div>
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 text-center">All Services</span>
+                    <span className={`text-sm font-medium text-center transition-colors ${
+                      isAllServicesActive 
+                        ? 'text-blue-600' 
+                        : 'text-gray-700 group-hover:text-blue-600'
+                    }`}>All Services</span>
                   </div>
                 </Link>
                 
@@ -75,13 +96,23 @@ export default function CategoryNavbar() {
                 {categories?.slice(0, 7).map((category: any) => {
                   const IconComponent = categoryIcons[category.name] || Sparkles;
                   const categorySlug = category.name.toLowerCase().replace(/\s+/g, '-');
+                  const isActive = currentCategory === category.name;
+                  
                   return (
                     <Link key={category.id} href={`/services/${categorySlug}`}>
                       <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                          <IconComponent className="h-8 w-8 text-gray-600 group-hover:text-red-600" />
+                        <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
+                          isActive 
+                            ? 'bg-red-600 text-white' 
+                            : 'bg-gray-100 text-gray-600 group-hover:bg-red-100 group-hover:text-red-600'
+                        }`}>
+                          <IconComponent className="h-8 w-8" />
                         </div>
-                        <span className="text-sm font-medium text-gray-700 group-hover:text-red-600 text-center max-w-[80px] leading-tight">
+                        <span className={`text-sm font-medium text-center max-w-[80px] leading-tight transition-colors ${
+                          isActive 
+                            ? 'text-red-600 font-semibold' 
+                            : 'text-gray-700 group-hover:text-red-600'
+                        }`}>
                           {category.name}
                         </span>
                       </div>
