@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Calendar, MapPin, Clock, User, Phone, Mail, Star, MessageCircle, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -77,9 +78,7 @@ export default function Bookings() {
   };
 
   const handleCancelBooking = (bookingId: number) => {
-    if (window.confirm('Are you sure you want to cancel this booking?')) {
-      cancelBookingMutation.mutate(bookingId);
-    }
+    cancelBookingMutation.mutate(bookingId);
   };
 
   if (isLoading) {
@@ -237,15 +236,33 @@ export default function Bookings() {
                   </div>
                   <div className="space-x-2">
                     {canCancelBooking(selectedBooking) && (
-                      <Button
-                        variant="destructive"
-                        onClick={() => {
-                          handleCancelBooking(selectedBooking.id);
-                          setSelectedBooking(null);
-                        }}
-                      >
-                        Cancel Booking
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive">
+                            Cancel Booking
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Cancel Booking</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to cancel this booking? This action cannot be undone and you may be charged a cancellation fee.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Keep Booking</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => {
+                                handleCancelBooking(selectedBooking.id);
+                                setSelectedBooking(null);
+                              }}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              Cancel Booking
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     )}
                     <Button onClick={() => setSelectedBooking(null)}>
                       Close

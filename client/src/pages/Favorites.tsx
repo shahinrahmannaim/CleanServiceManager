@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Heart, ShoppingCart, Clock, Star, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function Favorites() {
   const { user } = useAuth();
@@ -66,9 +67,7 @@ export default function Favorites() {
   };
 
   const handleRemoveFavorite = (serviceId: number) => {
-    if (window.confirm('Are you sure you want to remove this service from your favorites?')) {
-      removeFavoriteMutation.mutate(serviceId);
-    }
+    removeFavoriteMutation.mutate(serviceId);
   };
 
   const handleAddToCart = (serviceId: number) => {
@@ -151,12 +150,30 @@ export default function Favorites() {
                         {favorite.service?.category?.name}
                       </Badge>
                     </div>
-                    <button
-                      onClick={() => handleRemoveFavorite(favorite.serviceId)}
-                      className="absolute top-4 right-4 p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4 text-red-500" />
-                    </button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <button className="absolute top-4 right-4 p-2 bg-white/90 rounded-full hover:bg-white transition-colors">
+                          <Trash2 className="w-4 h-4 text-red-500" />
+                        </button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Remove from Favorites</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to remove this service from your favorites?
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={() => handleRemoveFavorite(favorite.serviceId)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Remove
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                   
                   <CardContent className="p-6">
@@ -198,13 +215,33 @@ export default function Favorites() {
                         {isInCart(favorite.serviceId) ? 'In Cart' : 'Add to Cart'}
                       </Button>
                       
-                      <button
-                        onClick={() => handleRemoveFavorite(favorite.serviceId)}
-                        disabled={removeFavoriteMutation.isPending}
-                        className="text-red-500 hover:text-red-700 transition-colors"
-                      >
-                        <Heart className="w-5 h-5 fill-current" />
-                      </button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <button
+                            disabled={removeFavoriteMutation.isPending}
+                            className="text-red-500 hover:text-red-700 transition-colors"
+                          >
+                            <Heart className="w-5 h-5 fill-current" />
+                          </button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Remove from Favorites</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to remove this service from your favorites?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => handleRemoveFavorite(favorite.serviceId)}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              Remove
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                     
                     <div className="mt-3 text-xs text-gray-500">

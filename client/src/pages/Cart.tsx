@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { ShoppingCart, Trash2, Plus, Minus, Clock, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 export default function Cart() {
   const { user } = useAuth();
@@ -79,15 +80,11 @@ export default function Cart() {
   };
 
   const handleRemoveItem = (id: number) => {
-    if (window.confirm('Are you sure you want to remove this item from your cart?')) {
-      removeFromCartMutation.mutate(id);
-    }
+    removeFromCartMutation.mutate(id);
   };
 
   const handleClearCart = () => {
-    if (window.confirm('Are you sure you want to clear your entire cart?')) {
-      clearCartMutation.mutate();
-    }
+    clearCartMutation.mutate();
   };
 
   const totalAmount = cartItems?.reduce((sum: number, item: any) => {
@@ -156,14 +153,34 @@ export default function Cart() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle>Cart Items ({totalItems})</CardTitle>
-                    <Button
-                      variant="outline"
-                      onClick={handleClearCart}
-                      disabled={clearCartMutation.isPending}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      Clear Cart
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          disabled={clearCartMutation.isPending}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          Clear Cart
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Clear Cart</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to clear your entire cart? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={handleClearCart}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Clear Cart
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -197,12 +214,30 @@ export default function Cart() {
                                 </div>
                               </div>
                             </div>
-                            <button
-                              onClick={() => handleRemoveItem(item.id)}
-                              className="text-red-500 hover:text-red-700 transition-colors"
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <button className="text-red-500 hover:text-red-700 transition-colors">
+                                  <Trash2 className="w-5 h-5" />
+                                </button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Remove Item</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to remove this item from your cart?
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction 
+                                    onClick={() => handleRemoveItem(item.id)}
+                                    className="bg-red-600 hover:bg-red-700"
+                                  >
+                                    Remove
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           </div>
                           
                           <div className="flex items-center justify-between mt-4">
