@@ -17,6 +17,7 @@ export default function Services() {
   const [selectedCity, setSelectedCity] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortBy, setSortBy] = useState('name');
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize filters from URL parameters
   useEffect(() => {
@@ -24,8 +25,11 @@ export default function Services() {
     const urlCity = urlParams.get('city') || '';
     const urlCategory = urlParams.get('category') || '';
     
+    console.log('URL Parameters:', { urlCity, urlCategory, location });
+    
     setSelectedCity(urlCity);
     setSelectedCategory(urlCategory);
+    setIsInitialized(true);
   }, [location]);
 
   const { data: services, isLoading: servicesLoading } = useQuery({
@@ -43,6 +47,7 @@ export default function Services() {
       const response = await fetch(`/api/services?${params.toString()}`);
       return response.json();
     },
+    enabled: isInitialized, // Only run query after URL parameters are parsed
   });
 
   const { data: categories } = useQuery({
