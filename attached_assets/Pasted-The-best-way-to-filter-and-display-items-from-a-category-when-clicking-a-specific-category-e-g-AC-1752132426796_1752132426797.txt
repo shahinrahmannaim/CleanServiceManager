@@ -1,0 +1,100 @@
+The best way to filter and display items from a category when clicking a specific category (e.g. “AC Cleaning”) depends on your architecture. Since you’re using React + Express + Prisma, here’s the recommended, scalable, and clean approach:
+
+⸻
+
+✅ Best Approach: Filter via Backend API + Dynamic Route
+
+🧠 Why:
+	•	Keeps frontend lean
+	•	Works for SEO (if SSR later)
+	•	Supports pagination, search, and filters easily
+	•	No need to fetch all services on frontend and filter manually
+
+⸻
+
+🔁 Step-by-Step Implementation
+
+1. ✅ Backend API: Filter by Category Slug or Name
+
+In your Express backend, add a route like:
+
+// GET /api/services/category/:categoryName
+router.get('/category/:categoryName', async (req, res) => {
+  const { categoryName } = req.params;
+  const services = await prisma.service.findMany({
+    where: {
+      category: {
+        name: categoryName, // or slug if you prefer URL-safe format
+      },
+      status: 'ACTIVE'
+    },
+    include: { category: true }
+  });
+  res.json(services);
+});
+
+✅ You can enhance it with pagination, sort, etc.
+
+⸻
+
+2. ✅ Frontend: Dynamic Category Click Handler
+
+In your React CategoryNavbar.jsx:
+
+const handleCategoryClick = (categoryName) => {
+  navigate(`/services/${categoryName}`); // or set local filter state
+};
+
+Or use Link:
+
+<Link to={`/services/${category.name}`}>{category.name}</Link>
+
+
+⸻
+
+3. ✅ Category Page Component
+
+// pages/CategoryServices.jsx
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "@/api/axiosInstance"; // configured with baseURL
+
+const CategoryServices = () => {
+  const { categoryName } = useParams();
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    axios.get(`/services/category/${categoryName}`)
+      .then(res => setServices(res.data))
+      .catch(err => console.error(err));
+  }, [categoryName]);
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {services.map(service => (
+        <div key={service.id} className="p-4 bg-white shadow rounded">
+          <h2 className="text-lg font-bold">{service.name}</h2>
+          <p>{service.description}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+
+⸻
+
+4. ✅ Routing
+
+<Route path="/services/:categoryName" element={<CategoryServices />} />
+
+
+⸻
+
+❌ Don’t:
+	•	Fetch all services and filter them client-side — inefficient for large apps.
+	•	Hardcode categories — fetch them dynamically from /api/categories.
+
+⸻
+
+Would you like the Prisma model and seed script for categories/services or pagination support in this filtering method?

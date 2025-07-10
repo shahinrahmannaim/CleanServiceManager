@@ -25,8 +25,6 @@ export default function Services() {
     const urlCity = urlParams.get('city') || '';
     const urlCategory = urlParams.get('category') || '';
     
-    console.log('URL Parameters:', { urlCity, urlCategory, location, windowSearch: window.location.search });
-    
     setSelectedCity(urlCity);
     setSelectedCategory(urlCategory);
     setIsInitialized(true);
@@ -187,15 +185,6 @@ export default function Services() {
                 {categories?.find((cat: any) => cat.id.toString() === selectedCategory)?.name || 'Category'}
               </Badge>
             )}
-          </div>
-        )}
-
-        {/* Debug Info */}
-        {selectedCategory && (
-          <div className="mb-4 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800">
-              Debug: Category Filter Applied - ID: {selectedCategory}
-            </p>
           </div>
         )}
 

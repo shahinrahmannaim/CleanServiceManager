@@ -35,6 +35,7 @@ Preferred communication style: Simple, everyday language.
 - **✅ Complete authentication forms**: Added Remember Me checkbox and Google/Facebook social login options to both login and register forms
 - **✅ Enhanced logo visibility**: Increased logo size from 14x14 to 20x20 pixels and improved category navigation icons for better brand recognition
 - **✅ Comprehensive input validation**: Implemented regex validation for email and password fields with security measures against SQL injection and script injection
+- **✅ Fixed category filtering functionality**: Resolved URL parameter parsing issue that prevented category filtering from working when clicking navbar categories
 
 ### Current Status
 - **Core Platform**: Fully functional with JWT authentication, role-based access, and database-driven content
