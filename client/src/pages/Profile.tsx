@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -378,6 +378,9 @@ export default function Profile() {
                         <DialogTitle>
                           {editingAddress ? "Edit Address" : "Add New Address"}
                         </DialogTitle>
+                        <DialogDescription>
+                          {editingAddress ? "Update your address information" : "Add a new address for faster booking"}
+                        </DialogDescription>
                       </DialogHeader>
                       <Form {...addressForm}>
                         <form onSubmit={addressForm.handleSubmit(handleAddressSubmit)} className="space-y-4">
