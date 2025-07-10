@@ -80,9 +80,7 @@ export default function CategoryNavbar() {
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-red-100 transition-colors">
                           <IconComponent className="h-8 w-8 text-gray-600 group-hover:text-red-600" />
                         </div>
-                        <span className="text-sm font-medium text-gray-700 group-hover:text-red-600 text-center max-w-[80px] leading-tight">
-                          {category.name}
-                        </span>
+                        
                       </div>
                     </Link>
                   );
