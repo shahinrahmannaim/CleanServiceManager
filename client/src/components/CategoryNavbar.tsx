@@ -74,8 +74,9 @@ export default function CategoryNavbar() {
                 {/* Category Items */}
                 {categories?.slice(0, 7).map((category: any) => {
                   const IconComponent = categoryIcons[category.name] || Sparkles;
+                  const categorySlug = category.name.toLowerCase().replace(/\s+/g, '-');
                   return (
-                    <Link key={category.id} href={`/services?category=${category.id}`}>
+                    <Link key={category.id} href={`/services/${categorySlug}`}>
                       <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-red-100 transition-colors">
                           <IconComponent className="h-8 w-8 text-gray-600 group-hover:text-red-600" />

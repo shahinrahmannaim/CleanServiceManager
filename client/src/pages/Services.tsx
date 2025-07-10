@@ -19,11 +19,19 @@ export default function Services() {
   const [sortBy, setSortBy] = useState('name');
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize filters from URL parameters
+  // Initialize filters from URL parameters and route
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlCity = urlParams.get('city') || '';
-    const urlCategory = urlParams.get('category') || '';
+    let urlCategory = urlParams.get('category') || '';
+    
+    // Check if we're on a category-specific route like /services/house-cleaning
+    const pathParts = location.split('/');
+    if (pathParts.length === 3 && pathParts[1] === 'services' && pathParts[2]) {
+      const categorySlug = pathParts[2];
+      // Convert slug back to category name for API lookup
+      urlCategory = categorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
     
     setSelectedCity(urlCity);
     setSelectedCategory(urlCategory);
@@ -36,7 +44,7 @@ export default function Services() {
       const params = new URLSearchParams();
       if (searchQuery) params.set('search', searchQuery);
       if (selectedCategory && selectedCategory !== 'all' && selectedCategory !== '') {
-        params.set('category', selectedCategory);
+        params.set('categoryName', selectedCategory);
       }
       if (selectedCity && selectedCity !== 'all' && selectedCity !== '') {
         params.set('city', selectedCity);

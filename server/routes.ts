@@ -207,7 +207,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Services routes
   app.get("/api/services", async (req, res) => {
     try {
-      const { category, search, city, minPrice, maxPrice } = req.query;
+      const { category, categoryName, search, city, minPrice, maxPrice } = req.query;
       
       let services;
       if (search) {
@@ -219,6 +219,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       } else if (category) {
         services = await storage.getServicesByCategory(parseInt(category as string));
+      } else if (categoryName) {
+        // Get all categories to find the one with matching name
+        const categories = await storage.getAllCategories();
+        const matchingCategory = categories.find(cat => 
+          cat.name.toLowerCase() === categoryName.toString().toLowerCase()
+        );
+        if (matchingCategory) {
+          services = await storage.getServicesByCategory(matchingCategory.id);
+        } else {
+          services = [];
+        }
       } else if (city) {
         services = await searchService.getServicesByLocation(city as string);
       } else {
