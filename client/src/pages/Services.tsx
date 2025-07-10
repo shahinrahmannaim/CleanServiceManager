@@ -18,11 +18,6 @@ export default function Services() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortBy, setSortBy] = useState('name');
 
-  // Parse URL parameters
-  const urlParams = new URLSearchParams(location.split('?')[1] || '');
-  const initialCity = urlParams.get('city') || '';
-  const initialCategory = urlParams.get('category') || '';
-
   // Initialize filters from URL parameters
   useEffect(() => {
     const urlParams = new URLSearchParams(location.split('?')[1] || '');
@@ -34,11 +29,16 @@ export default function Services() {
   }, [location]);
 
   const { data: services, isLoading: servicesLoading } = useQuery({
-    queryKey: ['/api/services', searchQuery, selectedCategory, location],
+    queryKey: ['/api/services', searchQuery, selectedCategory, selectedCity],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (searchQuery) params.set('search', searchQuery);
-      if (selectedCategory) params.set('category', selectedCategory);
+      if (selectedCategory && selectedCategory !== 'all' && selectedCategory !== '') {
+        params.set('category', selectedCategory);
+      }
+      if (selectedCity && selectedCity !== 'all' && selectedCity !== '') {
+        params.set('city', selectedCity);
+      }
       
       const response = await fetch(`/api/services?${params.toString()}`);
       return response.json();
@@ -67,15 +67,8 @@ export default function Services() {
     // Trigger refetch with current filters
   };
 
-  const filteredServices = services?.filter((service: any) => {
-    const matchesSearch = !searchQuery || 
-      service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      service.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    return matchesSearch;
-  }) || [];
-
-  const sortedServices = [...filteredServices].sort((a, b) => {
+  // Since filtering is done on server-side, just sort the services
+  const sortedServices = [...(services || [])].sort((a, b) => {
     switch (sortBy) {
       case 'price':
         return parseFloat(a.price) - parseFloat(b.price);
