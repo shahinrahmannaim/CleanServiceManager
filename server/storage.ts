@@ -22,6 +22,7 @@ export interface IStorage {
   deleteUser(id: number): Promise<void>;
   getAllUsers(): Promise<User[]>;
   getUsersByRole(role: string): Promise<User[]>;
+  getUsersByStatusAndRole(status: string, role: string): Promise<User[]>;
   
   // Categories
   getCategory(id: number): Promise<Category | undefined>;
@@ -154,6 +155,15 @@ export class DatabaseStorage implements IStorage {
 
   async getUsersByRole(role: string): Promise<User[]> {
     return await db.select().from(users).where(eq(users.role, role as any));
+  }
+
+  async getUsersByStatusAndRole(status: string, role: string): Promise<User[]> {
+    return await db.select().from(users).where(
+      and(
+        eq(users.status, status as any),
+        eq(users.role, role as any)
+      )
+    ).orderBy(desc(users.createdAt));
   }
 
   // Categories

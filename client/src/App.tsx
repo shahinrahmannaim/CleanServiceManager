@@ -24,6 +24,7 @@ import AdminCategories from "@/pages/admin/Categories";
 import AdminEmployees from "@/pages/admin/Employees";
 import AdminPromotions from "@/pages/admin/Promotions";
 import AdminPaymentMethods from "@/pages/admin/PaymentMethods";
+import AdminProviders from "@/pages/admin/Providers";
 import EmployeeTimeTracker from "@/pages/employee/TimeTracker";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
@@ -104,6 +105,12 @@ function Router() {
       <Route path="/admin/payment-methods">
         <ProtectedRoute roles={['admin', 'superadmin']}>
           <AdminPaymentMethods />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/providers">
+        <ProtectedRoute roles={['admin', 'superadmin']}>
+          <AdminProviders />
         </ProtectedRoute>
       </Route>
       

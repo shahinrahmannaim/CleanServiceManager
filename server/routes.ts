@@ -22,7 +22,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.post("/api/auth/register", async (req, res) => {
     try {
-      const { name, email, mobile, password, role = 'user' } = req.body;
+      const { 
+        name, 
+        email, 
+        mobile, 
+        password, 
+        role = 'user',
+        businessName,
+        businessAddress,
+        businessPhone,
+        experienceYears,
+        skills
+      } = req.body;
       
       // Check if user already exists
       const existingUser = await storage.getUserByEmail(email);
@@ -33,6 +44,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
 
+      // Set provider status - providers start as pending
+      const userStatus = role === 'provider' ? 'pending' : 'active';
+
       // Create user
       const user = await storage.createUser({
         name,
@@ -40,15 +54,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         mobile,
         password: hashedPassword,
         role: role as any,
+        status: userStatus as any,
         isVerifiedProvider: false,
         isEmailVerified: false,
         isMobileVerified: false,
+        businessName: role === 'provider' ? businessName : null,
+        businessAddress: role === 'provider' ? businessAddress : null,
+        businessPhone: role === 'provider' ? businessPhone : null,
+        experienceYears: role === 'provider' && experienceYears ? parseInt(experienceYears) : null,
+        skills: role === 'provider' ? skills : null,
       });
 
       // Send welcome email (disabled for testing)
       // await sendWelcomeEmail(email, name);
 
-      res.status(201).json({ message: "User created successfully", userId: user.id });
+      const message = role === 'provider' 
+        ? "Provider application submitted successfully. You'll be notified once approved."
+        : "User created successfully";
+
+      res.status(201).json({ message, userId: user.id });
     } catch (error) {
       console.error("Registration error:", error);
       res.status(500).json({ message: "Registration failed" });
@@ -754,6 +778,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Delete address error:", error);
       res.status(500).json({ message: "Failed to delete address" });
+    }
+  });
+
+  // Provider approval routes
+  app.get("/api/providers/pending", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const pendingProviders = await storage.getUsersByStatusAndRole('pending', 'provider');
+      res.json(pendingProviders);
+    } catch (error) {
+      console.error("Failed to fetch pending providers:", error);
+      res.status(500).json({ message: "Failed to fetch pending providers" });
+    }
+  });
+
+  app.put("/api/providers/:id/approve", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const providerId = parseInt(req.params.id);
+      const { approved } = req.body; // true for approve, false for reject
+
+      const status = approved ? 'active' : 'rejected';
+      const updatedProvider = await storage.updateUser(providerId, { status: status as any });
+
+      // TODO: Send email notification to provider about approval/rejection
+      
+      res.json({ 
+        message: approved ? "Provider approved successfully" : "Provider application rejected",
+        provider: updatedProvider 
+      });
+    } catch (error) {
+      console.error("Provider approval error:", error);
+      res.status(500).json({ message: "Failed to update provider status" });
     }
   });
 

@@ -22,6 +22,11 @@ export const register = async (data: {
   mobile: string;
   password: string;
   role?: string;
+  businessName?: string;
+  businessAddress?: string;
+  businessPhone?: string;
+  experienceYears?: string;
+  skills?: string;
 }): Promise<{ message: string; userId: number }> => {
   const response = await apiRequest('POST', '/api/auth/register', data);
   return response.json();

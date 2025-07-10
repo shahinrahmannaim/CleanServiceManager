@@ -3,8 +3,9 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const roleEnum = pgEnum("role", ["user", "employee", "admin", "superadmin"]);
+export const roleEnum = pgEnum("role", ["user", "employee", "provider", "admin", "superadmin"]);
 export const statusEnum = pgEnum("status", ["active", "inactive", "pending"]);
+export const userStatusEnum = pgEnum("user_status", ["active", "inactive", "pending", "rejected"]);
 export const bookingStatusEnum = pgEnum("booking_status", ["pending", "confirmed", "in_progress", "completed", "cancelled"]);
 export const paymentStatusEnum = pgEnum("payment_status", ["pending", "paid", "failed", "refunded"]);
 export const invoiceStatusEnum = pgEnum("invoice_status", ["draft", "sent", "paid", "overdue"]);
@@ -16,9 +17,17 @@ export const users = pgTable("users", {
   mobile: text("mobile").notNull(),
   password: text("password").notNull(),
   role: roleEnum("role").notNull().default("user"),
+  status: userStatusEnum("status").notNull().default("active"),
   isVerifiedProvider: boolean("is_verified_provider").notNull().default(false),
   isEmailVerified: boolean("is_email_verified").notNull().default(false),
   isMobileVerified: boolean("is_mobile_verified").notNull().default(false),
+  // Provider-specific fields
+  businessName: text("business_name"),
+  businessAddress: text("business_address"),
+  businessPhone: text("business_phone"),
+  experienceYears: integer("experience_years"),
+  skills: text("skills"), // JSON array of skills
+  documents: text("documents"), // JSON array of document URLs
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
