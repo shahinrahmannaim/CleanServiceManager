@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -251,14 +252,24 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     mutationFn: ({ identifier, password }: { identifier: string; password: string }) =>
       login(identifier, password),
     onSuccess: (data) => {
-      setUser(data.user);
-      onClose();
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${data.user.name}!`,
-      });
+      try {
+        setUser(data.user);
+        handleClose();
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${data.user.name}!`,
+        });
+      } catch (error) {
+        console.error('Login success handler error:', error);
+        toast({
+          title: "Login warning",
+          description: "Login successful but there was an issue with the interface",
+          variant: "default",
+        });
+      }
     },
     onError: (error: any) => {
+      console.error('Login error:', error);
       toast({
         title: "Login failed",
         description: error.message || "Invalid credentials",
@@ -372,17 +383,26 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   };
 
   const handleClose = () => {
-    setMode('login');
-    loginForm.reset();
-    registerForm.reset();
-    otpForm.reset();
-    setOtpIdentifier('');
-    onClose();
+    try {
+      setMode('login');
+      loginForm.reset();
+      registerForm.reset();
+      otpForm.reset();
+      setOtpIdentifier('');
+      onClose();
+    } catch (error) {
+      console.error('Error closing auth modal:', error);
+    }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      console.log('Dialog open change:', open);
+      if (!open) {
+        handleClose();
+      }
+    }}>
+      <DialogContent className="sm:max-w-md" aria-describedby="auth-modal-description">
         <DialogHeader>
           <div className="flex justify-center mb-4">
             <img 
@@ -395,13 +415,18 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             {mode === 'login' && (
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-                <p className="text-gray-600 text-sm">Sign in to your Panaroma account</p>
               </div>
             )}
             {mode === 'register' && 'Join Panaroma'}
             {mode === 'provider' && 'Become a Service Provider'}
             {mode === 'otp' && 'Enter OTP Code'}
           </DialogTitle>
+          <DialogDescription id="auth-modal-description" className="text-center text-gray-600 text-sm">
+            {mode === 'login' && 'Sign in to your Panaroma account'}
+            {mode === 'register' && 'Create your account to book cleaning services'}
+            {mode === 'provider' && 'Register as a professional cleaning service provider'}
+            {mode === 'otp' && 'Enter the verification code sent to your email or phone'}
+          </DialogDescription>
         </DialogHeader>
 
         {mode === 'otp' ? (
