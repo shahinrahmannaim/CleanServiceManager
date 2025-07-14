@@ -47,6 +47,8 @@ Preferred communication style: Simple, everyday language.
 - **✅ Improved user experience**: Clean separation between customer registration and seller application processes
 - **✅ Updated role system**: Changed from provider to seller role (superadmin, admin, seller, user) throughout database and codebase
 - **✅ Database schema updates**: Renamed provider_id to seller_id, is_verified_provider to is_verified_seller, updated role enum
+- **✅ Removed account type selection**: Eliminated account type input field from registration forms - all users register as "user" by default
+- **✅ Simplified registration process**: Users can only register as regular users, role changes handled by admins through user management
 
 ### Current Status
 - **Core Platform**: Fully functional with JWT authentication, role-based access, and database-driven content

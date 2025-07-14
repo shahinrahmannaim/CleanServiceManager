@@ -18,7 +18,7 @@ const registerSchema = z.object({
   mobile: z.string().min(8, "Mobile number must be at least 8 digits"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Confirm password is required"),
-  role: z.enum(['user', 'employee']).default('user'),
+
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],
@@ -42,7 +42,7 @@ export default function Register({ onSuccess }: RegisterProps) {
       mobile: "",
       password: "",
       confirmPassword: "",
-      role: "user" as const,
+
     },
   });
 
@@ -154,27 +154,7 @@ export default function Register({ onSuccess }: RegisterProps) {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="role"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-gray-700 font-medium">Account Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500">
-                      <SelectValue placeholder="Select account type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="user">Customer</SelectItem>
-                    <SelectItem value="employee">Service Provider</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
 
           <FormField
             control={form.control}

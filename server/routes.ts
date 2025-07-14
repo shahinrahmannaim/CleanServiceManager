@@ -27,7 +27,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email, 
         mobile, 
         password, 
-        role = 'user',
         businessName,
         businessAddress,
         businessPhone,
@@ -44,8 +43,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      // Set provider status - providers start as pending
-      const userStatus = role === 'provider' ? 'pending' : 'active';
+      // All users start as active by default
+      const userStatus = 'active';
 
       // Create user
       const user = await storage.createUser({
@@ -53,24 +52,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email,
         mobile,
         password: hashedPassword,
-        role: role as any,
+        role: 'user',
         status: userStatus as any,
         isVerifiedSeller: false,
         isEmailVerified: false,
         isMobileVerified: false,
-        businessName: role === 'provider' ? businessName : null,
-        businessAddress: role === 'provider' ? businessAddress : null,
-        businessPhone: role === 'provider' ? businessPhone : null,
-        experienceYears: role === 'provider' && experienceYears ? parseInt(experienceYears) : null,
-        skills: role === 'provider' ? skills : null,
+        businessName: null,
+        businessAddress: null,
+        businessPhone: null,
+        experienceYears: null,
+        skills: null,
       });
 
       // Send welcome email (disabled for testing)
       // await sendWelcomeEmail(email, name);
 
-      const message = role === 'provider' 
-        ? "Provider application submitted successfully. You'll be notified once approved."
-        : "User created successfully";
+      const message = "User created successfully";
 
       res.status(201).json({ message, userId: user.id });
     } catch (error) {

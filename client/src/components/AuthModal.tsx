@@ -110,7 +110,7 @@ const registerSchema = z.object({
   confirmPassword: z.string()
     .min(8, 'Confirm password is required')
     .max(128, 'Password must be less than 128 characters'),
-  role: z.enum(['user', 'employee']).default('user'),
+
   rememberMe: z.boolean().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -163,7 +163,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       mobile: '',
       password: '',
       confirmPassword: '',
-      role: 'user',
       rememberMe: false,
     },
   });
@@ -635,27 +634,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     )}
                   />
 
-                  <FormField
-                    control={registerForm.control}
-                    name="role"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Account Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger className="h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500">
-                              <SelectValue placeholder="Select account type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="user">Customer</SelectItem>
-                            <SelectItem value="employee">Service Provider</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+
 
                   <FormField
                     control={registerForm.control}
