@@ -41,10 +41,12 @@ Preferred communication style: Simple, everyday language.
 
 ### July 14, 2025
 - **✅ Restructured registration flow**: Simplified registration process by removing provider option from main registration form
-- **✅ Implemented "Become a Seller" feature**: Added provider upgrade option in user profile with complete application form
+- **✅ Implemented "Become a Seller" feature**: Added seller upgrade option in user profile with complete application form
 - **✅ Enhanced mobile responsiveness**: Fixed authentication modal scrolling and sizing issues on mobile devices
-- **✅ Added provider application backend**: Created `/api/auth/become-provider` endpoint for user role upgrades
-- **✅ Improved user experience**: Clean separation between customer registration and provider application processes
+- **✅ Added seller application backend**: Created `/api/auth/become-seller` endpoint for user role upgrades
+- **✅ Improved user experience**: Clean separation between customer registration and seller application processes
+- **✅ Updated role system**: Changed from provider to seller role (superadmin, admin, seller, user) throughout database and codebase
+- **✅ Database schema updates**: Renamed provider_id to seller_id, is_verified_provider to is_verified_seller, updated role enum
 
 ### Current Status
 - **Core Platform**: Fully functional with JWT authentication, role-based access, and database-driven content

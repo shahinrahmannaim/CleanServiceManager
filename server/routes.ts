@@ -55,7 +55,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         password: hashedPassword,
         role: role as any,
         status: userStatus as any,
-        isVerifiedProvider: false,
+        isVerifiedSeller: false,
         isEmailVerified: false,
         isMobileVerified: false,
         businessName: role === 'provider' ? businessName : null,
@@ -164,31 +164,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/auth/become-provider", authenticate, async (req: AuthRequest, res) => {
+  app.post("/api/auth/become-seller", authenticate, async (req: AuthRequest, res) => {
     try {
       const { businessName, businessAddress, businessPhone, experienceYears, skills } = req.body;
       
-      // Check if user is already a provider
-      if (req.user.role === 'provider') {
-        return res.status(400).json({ message: "You are already a service provider" });
+      // Check if user is already a seller
+      if (req.user.role === 'seller') {
+        return res.status(400).json({ message: "You are already a seller" });
       }
 
-      // Update user to provider with pending status
+      // Update user to seller with pending status
       await storage.updateUser(req.user.id, {
-        role: 'provider',
+        role: 'seller',
         status: 'pending',
         businessName,
         businessAddress,
         businessPhone,
         experienceYears,
         skills,
-        isVerifiedProvider: false,
+        isVerifiedSeller: false,
       });
 
-      res.json({ message: "Provider application submitted successfully. You'll be notified once approved." });
+      res.json({ message: "Seller application submitted successfully. You'll be notified once approved." });
     } catch (error) {
-      console.error("Become provider error:", error);
-      res.status(500).json({ message: "Failed to submit provider application" });
+      console.error("Become seller error:", error);
+      res.status(500).json({ message: "Failed to submit seller application" });
     }
   });
 

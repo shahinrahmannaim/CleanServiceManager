@@ -3,7 +3,7 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const roleEnum = pgEnum("role", ["user", "employee", "provider", "admin", "superadmin"]);
+export const roleEnum = pgEnum("role", ["user", "employee", "seller", "admin", "superadmin"]);
 export const statusEnum = pgEnum("status", ["active", "inactive", "pending"]);
 export const userStatusEnum = pgEnum("user_status", ["active", "inactive", "pending", "rejected"]);
 export const bookingStatusEnum = pgEnum("booking_status", ["pending", "confirmed", "in_progress", "completed", "cancelled"]);
@@ -18,10 +18,10 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   role: roleEnum("role").notNull().default("user"),
   status: userStatusEnum("status").notNull().default("active"),
-  isVerifiedProvider: boolean("is_verified_provider").notNull().default(false),
+  isVerifiedSeller: boolean("is_verified_seller").notNull().default(false),
   isEmailVerified: boolean("is_email_verified").notNull().default(false),
   isMobileVerified: boolean("is_mobile_verified").notNull().default(false),
-  // Provider-specific fields
+  // Seller-specific fields
   businessName: text("business_name"),
   businessAddress: text("business_address"),
   businessPhone: text("business_phone"),
@@ -50,7 +50,7 @@ export const services = pgTable("services", {
   duration: integer("duration").notNull(), // in minutes
   image: text("image"),
   status: statusEnum("status").notNull().default("active"),
-  providerId: integer("provider_id").references(() => users.id),
+  sellerId: integer("seller_id").references(() => users.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -195,8 +195,8 @@ export const servicesRelations = relations(services, ({ one, many }) => ({
     fields: [services.categoryId],
     references: [categories.id],
   }),
-  provider: one(users, {
-    fields: [services.providerId],
+  seller: one(users, {
+    fields: [services.sellerId],
     references: [users.id],
   }),
   bookings: many(bookings),

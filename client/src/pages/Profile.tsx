@@ -153,15 +153,15 @@ export default function Profile() {
     },
   });
 
-  const becomeProviderMutation = useMutation({
-    mutationFn: (data: ProviderFormData) => apiRequest("/api/auth/become-provider", {
+  const becomeSellerMutation = useMutation({
+    mutationFn: (data: ProviderFormData) => apiRequest("/api/auth/become-seller", {
       method: "POST",
       body: JSON.stringify(data),
     }),
     onSuccess: () => {
       toast({
-        title: "Provider application submitted",
-        description: "Your provider application has been submitted for review. You'll be notified once it's approved.",
+        title: "Seller application submitted",
+        description: "Your seller application has been submitted for review. You'll be notified once it's approved.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
       setIsProviderDialogOpen(false);
@@ -170,7 +170,7 @@ export default function Profile() {
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to submit provider application",
+        description: error.message || "Failed to submit seller application",
         variant: "destructive",
       });
     },
@@ -284,7 +284,7 @@ export default function Profile() {
   };
 
   const handleProviderSubmit = (data: ProviderFormData) => {
-    becomeProviderMutation.mutate(data);
+    becomeSellerMutation.mutate(data);
   };
 
   const getAddressTypeIcon = (type: string) => {
@@ -404,16 +404,16 @@ export default function Profile() {
             {user.role === 'user' && (
               <Card className="mt-6">
                 <CardHeader>
-                  <CardTitle>Become a Service Provider</CardTitle>
+                  <CardTitle>Become a Seller</CardTitle>
                   <CardDescription>
-                    Want to offer your cleaning services? Join our network of professional service providers.
+                    Want to offer your cleaning services? Join our network of professional sellers.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <p className="text-sm text-gray-600">
-                        Apply to become a service provider and start earning by offering your cleaning services to customers.
+                        Apply to become a seller and start earning by offering your cleaning services to customers.
                       </p>
                     </div>
                     <Dialog open={isProviderDialogOpen} onOpenChange={setIsProviderDialogOpen}>
@@ -424,9 +424,9 @@ export default function Profile() {
                       </DialogTrigger>
                       <DialogContent className="max-w-2xl">
                         <DialogHeader>
-                          <DialogTitle>Become a Service Provider</DialogTitle>
+                          <DialogTitle>Become a Seller</DialogTitle>
                           <DialogDescription>
-                            Fill out the application form to become a professional service provider.
+                            Fill out the application form to become a professional seller.
                           </DialogDescription>
                         </DialogHeader>
                         <Form {...providerForm}>
@@ -516,7 +516,7 @@ export default function Profile() {
 
                             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                               <p className="text-sm text-yellow-800">
-                                <strong>Note:</strong> Your provider application will be reviewed by our admin team. 
+                                <strong>Note:</strong> Your seller application will be reviewed by our admin team. 
                                 You'll receive an email notification once your application is approved.
                               </p>
                             </div>
@@ -532,10 +532,10 @@ export default function Profile() {
                               </Button>
                               <Button
                                 type="submit"
-                                disabled={becomeProviderMutation.isPending}
+                                disabled={becomeSellerMutation.isPending}
                                 className="flex-1"
                               >
-                                {becomeProviderMutation.isPending ? 'Submitting...' : 'Submit Application'}
+                                {becomeSellerMutation.isPending ? 'Submitting...' : 'Submit Application'}
                               </Button>
                             </div>
                           </form>
