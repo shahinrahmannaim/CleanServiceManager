@@ -837,6 +837,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Seller management routes
+  app.get("/api/sellers", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const sellers = await storage.getUsersByRole('seller');
+      res.json(sellers);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch sellers" });
+    }
+  });
+
+  app.get("/api/sellers/stats", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const allSellers = await storage.getUsersByRole('seller');
+      const stats = {
+        totalSellers: allSellers.length,
+        activeSellers: allSellers.filter((s: any) => s.status === 'active' && s.isVerifiedSeller).length,
+        pendingSellers: allSellers.filter((s: any) => s.status === 'pending').length,
+        rejectedSellers: allSellers.filter((s: any) => s.status === 'rejected').length,
+      };
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch seller stats" });
+    }
+  });
+
+  app.put("/api/sellers/:id/approve", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      await storage.updateUser(parseInt(id), {
+        status: 'active',
+        isVerifiedSeller: true,
+      });
+      res.json({ message: "Seller approved successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to approve seller" });
+    }
+  });
+
+  app.put("/api/sellers/:id/reject", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      await storage.updateUser(parseInt(id), {
+        status: 'rejected',
+        isVerifiedSeller: false,
+      });
+      res.json({ message: "Seller rejected successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to reject seller" });
+    }
+  });
+
+  app.put("/api/sellers/:id/status", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      await storage.updateUser(parseInt(id), { status });
+      res.json({ message: "Seller status updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update seller status" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   // WebSocket server for real-time features
