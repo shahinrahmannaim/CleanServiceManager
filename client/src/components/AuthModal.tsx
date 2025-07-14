@@ -402,13 +402,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         handleClose();
       }
     }}>
-      <DialogContent className="sm:max-w-md" aria-describedby="auth-modal-description">
+      <DialogContent className="max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto p-4 sm:p-6" aria-describedby="auth-modal-description">
         <DialogHeader>
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-3">
             <img 
               src="/logo.jpeg" 
               alt="Panaroma Cleaning Services" 
-              className="h-16 w-auto object-contain"
+              className="h-12 w-auto object-contain"
             />
           </div>
           <DialogTitle className="text-center">
@@ -529,7 +529,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           </Form>
         ) : (
           <Tabs value={mode} onValueChange={(value) => setMode(value as 'login' | 'register' | 'provider')}>
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-3 text-sm">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Customer</TabsTrigger>
               <TabsTrigger value="provider">Provider</TabsTrigger>
@@ -877,9 +877,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </Form>
             </TabsContent>
 
-            <TabsContent value="provider" className="space-y-4">
+            <TabsContent value="provider" className="space-y-3">
               <Form {...providerForm}>
-                <form onSubmit={providerForm.handleSubmit(onProviderSubmit)} className="space-y-4">
+                <form onSubmit={providerForm.handleSubmit(onProviderSubmit)} className="space-y-3">
                   <FormField
                     control={providerForm.control}
                     name="name"
@@ -1032,7 +1032,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                         <FormControl>
                           <textarea
                             placeholder="Describe your skills and services offered..."
-                            className="w-full h-20 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 resize-none"
+                            className="w-full h-16 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 resize-none text-sm"
                             {...field}
                           />
                         </FormControl>
@@ -1107,8 +1107,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     )}
                   />
 
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-sm text-yellow-800">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2">
+                    <p className="text-xs text-yellow-800">
                       <strong>Note:</strong> Your provider application will be reviewed by our admin team. 
                       You'll receive an email notification once your application is approved.
                     </p>
