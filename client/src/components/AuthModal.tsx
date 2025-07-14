@@ -117,62 +117,7 @@ const registerSchema = z.object({
   path: ['confirmPassword'],
 });
 
-const providerRegisterSchema = z.object({
-  name: z.string()
-    .min(2, 'Name must be at least 2 characters')
-    .max(50, 'Name must be less than 50 characters')
-    .regex(/^[a-zA-Z\s]+$/, 'Name can only contain letters and spaces')
-    .refine(validateNoSQLInjection, 'Invalid characters detected')
-    .refine(validateNoScriptInjection, 'Invalid characters detected'),
-  email: z.string()
-    .email('Please enter a valid email address')
-    .max(255, 'Email must be less than 255 characters')
-    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Invalid email format')
-    .refine(validateNoSQLInjection, 'Invalid characters detected')
-    .refine(validateNoScriptInjection, 'Invalid characters detected'),
-  mobile: z.string()
-    .min(8, 'Mobile number must be at least 8 digits')
-    .max(15, 'Mobile number must be less than 15 digits')
-    .regex(/^\+?[1-9]\d{7,14}$/, 'Please enter a valid mobile number')
-    .refine(validateNoSQLInjection, 'Invalid characters detected')
-    .refine(validateNoScriptInjection, 'Invalid characters detected'),
-  password: z.string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(128, 'Password must be less than 128 characters')
-    .regex(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d@$!%*?&.#_-]+$/, 'Password must contain at least one letter and one number')
-    .refine(validateNoSQLInjection, 'Invalid characters detected')
-    .refine(validateNoScriptInjection, 'Invalid characters detected'),
-  confirmPassword: z.string()
-    .min(8, 'Confirm password is required')
-    .max(128, 'Password must be less than 128 characters'),
-  businessName: z.string()
-    .min(2, 'Business name must be at least 2 characters')
-    .max(100, 'Business name must be less than 100 characters')
-    .refine(validateNoSQLInjection, 'Invalid characters detected')
-    .refine(validateNoScriptInjection, 'Invalid characters detected'),
-  businessAddress: z.string()
-    .min(10, 'Business address must be at least 10 characters')
-    .max(200, 'Business address must be less than 200 characters')
-    .refine(validateNoSQLInjection, 'Invalid characters detected')
-    .refine(validateNoScriptInjection, 'Invalid characters detected'),
-  businessPhone: z.string()
-    .min(8, 'Business phone must be at least 8 digits')
-    .max(15, 'Business phone must be less than 15 digits')
-    .regex(/^\+?[1-9]\d{7,14}$/, 'Please enter a valid business phone number')
-    .refine(validateNoSQLInjection, 'Invalid characters detected')
-    .refine(validateNoScriptInjection, 'Invalid characters detected'),
-  experienceYears: z.number()
-    .min(0, 'Experience years cannot be negative')
-    .max(50, 'Experience years cannot exceed 50'),
-  skills: z.string()
-    .min(10, 'Skills description must be at least 10 characters')
-    .max(500, 'Skills description must be less than 500 characters')
-    .refine(validateNoSQLInjection, 'Invalid characters detected')
-    .refine(validateNoScriptInjection, 'Invalid characters detected'),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword'],
-});
+
 
 const otpSchema = z.object({
   identifier: z.string()
@@ -193,7 +138,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const [mode, setMode] = useState<'login' | 'register' | 'provider' | 'otp'>('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'otp'>('login');
   const [otpIdentifier, setOtpIdentifier] = useState('');
   const [otpType, setOtpType] = useState<'email' | 'mobile'>('email');
   const [showPassword, setShowPassword] = useState(false);
@@ -223,21 +168,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     },
   });
 
-  const providerForm = useForm<z.infer<typeof providerRegisterSchema>>({
-    resolver: zodResolver(providerRegisterSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      mobile: '',
-      password: '',
-      confirmPassword: '',
-      businessName: '',
-      businessAddress: '',
-      businessPhone: '',
-      experienceYears: 0,
-      skills: '',
-    },
-  });
+
 
   const otpForm = useForm<z.infer<typeof otpSchema>>({
     resolver: zodResolver(otpSchema),
@@ -296,30 +227,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     },
   });
 
-  const providerRegisterMutation = useMutation({
-    mutationFn: (data: z.infer<typeof providerRegisterSchema>) => {
-      return register({
-        ...data,
-        role: 'provider',
-        experienceYears: data.experienceYears.toString(),
-      });
-    },
-    onSuccess: () => {
-      handleClose();
-      toast({
-        title: "Provider application submitted",
-        description: "Your provider application has been submitted for review. You'll be notified once it's approved.",
-      });
-    },
-    onError: (error: any) => {
-      console.error('Provider registration error:', error);
-      toast({
-        title: "Application failed",
-        description: error.message || "An error occurred during provider registration.",
-        variant: "destructive",
-      });
-    },
-  });
+
 
   const sendOtpMutation = useMutation({
     mutationFn: ({ identifier, type }: { identifier: string; type: 'email' | 'mobile' }) =>
@@ -369,9 +277,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     registerMutation.mutate(data);
   };
 
-  const onProviderSubmit = (data: z.infer<typeof providerRegisterSchema>) => {
-    providerRegisterMutation.mutate(data);
-  };
+
 
   const onOtpSubmit = (data: z.infer<typeof otpSchema>) => {
     verifyOtpMutation.mutate(data);
@@ -418,13 +324,13 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </div>
             )}
             {mode === 'register' && 'Join Panaroma'}
-            {mode === 'provider' && 'Become a Service Provider'}
+
             {mode === 'otp' && 'Enter OTP Code'}
           </DialogTitle>
           <DialogDescription id="auth-modal-description" className="text-center text-gray-600 text-sm">
             {mode === 'login' && 'Sign in to your Panaroma account'}
             {mode === 'register' && 'Create your account to book cleaning services'}
-            {mode === 'provider' && 'Register as a professional cleaning service provider'}
+
             {mode === 'otp' && 'Enter the verification code sent to your email or phone'}
           </DialogDescription>
         </DialogHeader>
@@ -528,11 +434,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </form>
           </Form>
         ) : (
-          <Tabs value={mode} onValueChange={(value) => setMode(value as 'login' | 'register' | 'provider')}>
-            <TabsList className="grid w-full grid-cols-3 text-sm">
+          <Tabs value={mode} onValueChange={(value) => setMode(value as 'login' | 'register')}>
+            <TabsList className="grid w-full grid-cols-2 text-sm">
               <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Customer</TabsTrigger>
-              <TabsTrigger value="provider">Provider</TabsTrigger>
+              <TabsTrigger value="register">Register</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login" className="space-y-4">
@@ -877,253 +782,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </Form>
             </TabsContent>
 
-            <TabsContent value="provider" className="space-y-3">
-              <Form {...providerForm}>
-                <form onSubmit={providerForm.handleSubmit(onProviderSubmit)} className="space-y-3">
-                  <FormField
-                    control={providerForm.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Full Name</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            <Input
-                              placeholder="Enter your full name"
-                              className="pl-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
 
-                  <FormField
-                    control={providerForm.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Email Address</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            <Input
-                              type="email"
-                              placeholder="Enter your email"
-                              className="pl-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={providerForm.control}
-                    name="mobile"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Mobile Number</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            <Input
-                              placeholder="Enter mobile number"
-                              className="pl-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={providerForm.control}
-                    name="businessName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Business Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter your business name"
-                            className="h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={providerForm.control}
-                    name="businessAddress"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Business Address</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter your business address"
-                            className="h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={providerForm.control}
-                    name="businessPhone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Business Phone</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            <Input
-                              placeholder="Enter business phone"
-                              className="pl-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
-                              {...field}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={providerForm.control}
-                    name="experienceYears"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Years of Experience</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="0"
-                            min="0"
-                            max="50"
-                            className="h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
-                            {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={providerForm.control}
-                    name="skills"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Skills & Services</FormLabel>
-                        <FormControl>
-                          <textarea
-                            placeholder="Describe your skills and services offered..."
-                            className="w-full h-16 px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 resize-none text-sm"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={providerForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Password</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            <Input
-                              type={showPassword ? "text" : "password"}
-                              placeholder="Enter password"
-                              className="pl-12 pr-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
-                              {...field}
-                            />
-                            <button
-                              type="button"
-                              className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
-                              {showPassword ? (
-                                <EyeOff className="h-5 w-5 text-gray-400" />
-                              ) : (
-                                <Eye className="h-5 w-5 text-gray-400" />
-                              )}
-                            </button>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={providerForm.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700 font-medium">Confirm Password</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                            <Input
-                              type={showConfirmPassword ? "text" : "password"}
-                              placeholder="Confirm password"
-                              className="pl-12 pr-12 h-10 border-2 border-gray-200 rounded-lg focus:border-blue-500"
-                              {...field}
-                            />
-                            <button
-                              type="button"
-                              className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            >
-                              {showConfirmPassword ? (
-                                <EyeOff className="h-5 w-5 text-gray-400" />
-                              ) : (
-                                <Eye className="h-5 w-5 text-gray-400" />
-                              )}
-                            </button>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2">
-                    <p className="text-xs text-yellow-800">
-                      <strong>Note:</strong> Your provider application will be reviewed by our admin team. 
-                      You'll receive an email notification once your application is approved.
-                    </p>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={providerRegisterMutation.isPending}
-                    className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
-                  >
-                    {providerRegisterMutation.isPending ? 'Submitting Application...' : 'Submit Provider Application'}
-                  </Button>
-                </form>
-              </Form>
-            </TabsContent>
           </Tabs>
         )}
       </DialogContent>

@@ -58,8 +58,17 @@ const addressSchema = z.object({
   isDefault: z.boolean().default(false),
 });
 
+const providerSchema = z.object({
+  businessName: z.string().min(2, "Business name must be at least 2 characters"),
+  businessAddress: z.string().min(10, "Business address must be at least 10 characters"),
+  businessPhone: z.string().regex(/^\+?[1-9]\d{7,14}$/, "Please enter a valid business phone number"),
+  experienceYears: z.number().min(0, "Experience years cannot be negative").max(50, "Experience years cannot exceed 50"),
+  skills: z.string().min(10, "Skills description must be at least 10 characters"),
+});
+
 type ProfileFormData = z.infer<typeof profileSchema>;
 type AddressFormData = z.infer<typeof addressSchema>;
+type ProviderFormData = z.infer<typeof providerSchema>;
 
 export default function Profile() {
   const { user } = useAuth();
@@ -67,6 +76,7 @@ export default function Profile() {
   const queryClient = useQueryClient();
   const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<any>(null);
+  const [isProviderDialogOpen, setIsProviderDialogOpen] = useState(false);
 
   // Queries
   const { data: addresses = [] } = useQuery({
@@ -103,6 +113,18 @@ export default function Profile() {
     },
   });
 
+  // Provider form
+  const providerForm = useForm<ProviderFormData>({
+    resolver: zodResolver(providerSchema),
+    defaultValues: {
+      businessName: "",
+      businessAddress: "",
+      businessPhone: "",
+      experienceYears: 0,
+      skills: "",
+    },
+  });
+
   // Mutations
   const updateProfileMutation = useMutation({
     mutationFn: (data: ProfileFormData) => apiRequest("/api/users/profile", {
@@ -126,6 +148,29 @@ export default function Profile() {
       toast({
         title: "Error",
         description: error.message || "Failed to update profile",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const becomeProviderMutation = useMutation({
+    mutationFn: (data: ProviderFormData) => apiRequest("/api/auth/become-provider", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+    onSuccess: () => {
+      toast({
+        title: "Provider application submitted",
+        description: "Your provider application has been submitted for review. You'll be notified once it's approved.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      setIsProviderDialogOpen(false);
+      providerForm.reset();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit provider application",
         variant: "destructive",
       });
     },
@@ -236,6 +281,10 @@ export default function Profile() {
 
   const handleDeleteAddress = (id: number) => {
     deleteAddressMutation.mutate(id);
+  };
+
+  const handleProviderSubmit = (data: ProviderFormData) => {
+    becomeProviderMutation.mutate(data);
   };
 
   const getAddressTypeIcon = (type: string) => {
@@ -350,6 +399,153 @@ export default function Profile() {
                 </Form>
               </CardContent>
             </Card>
+
+            {/* Provider Upgrade Section */}
+            {user.role === 'user' && (
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>Become a Service Provider</CardTitle>
+                  <CardDescription>
+                    Want to offer your cleaning services? Join our network of professional service providers.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-600">
+                        Apply to become a service provider and start earning by offering your cleaning services to customers.
+                      </p>
+                    </div>
+                    <Dialog open={isProviderDialogOpen} onOpenChange={setIsProviderDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" className="ml-4">
+                          Apply Now
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>Become a Service Provider</DialogTitle>
+                          <DialogDescription>
+                            Fill out the application form to become a professional service provider.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <Form {...providerForm}>
+                          <form onSubmit={providerForm.handleSubmit(handleProviderSubmit)} className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <FormField
+                                control={providerForm.control}
+                                name="businessName"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Business Name</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Enter your business name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              <FormField
+                                control={providerForm.control}
+                                name="businessPhone"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Business Phone</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="Enter business phone number" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+                            </div>
+
+                            <FormField
+                              control={providerForm.control}
+                              name="businessAddress"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Business Address</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Enter your business address" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={providerForm.control}
+                              name="experienceYears"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Years of Experience</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      placeholder="0"
+                                      min="0"
+                                      max="50"
+                                      {...field}
+                                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={providerForm.control}
+                              name="skills"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Skills & Services</FormLabel>
+                                  <FormControl>
+                                    <Textarea
+                                      placeholder="Describe your skills and services offered..."
+                                      className="min-h-[100px]"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                              <p className="text-sm text-yellow-800">
+                                <strong>Note:</strong> Your provider application will be reviewed by our admin team. 
+                                You'll receive an email notification once your application is approved.
+                              </p>
+                            </div>
+
+                            <div className="flex gap-2">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setIsProviderDialogOpen(false)}
+                                className="flex-1"
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                type="submit"
+                                disabled={becomeProviderMutation.isPending}
+                                className="flex-1"
+                              >
+                                {becomeProviderMutation.isPending ? 'Submitting...' : 'Submit Application'}
+                              </Button>
+                            </div>
+                          </form>
+                        </Form>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="addresses">

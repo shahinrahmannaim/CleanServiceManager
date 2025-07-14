@@ -164,6 +164,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/auth/become-provider", authenticate, async (req: AuthRequest, res) => {
+    try {
+      const { businessName, businessAddress, businessPhone, experienceYears, skills } = req.body;
+      
+      // Check if user is already a provider
+      if (req.user.role === 'provider') {
+        return res.status(400).json({ message: "You are already a service provider" });
+      }
+
+      // Update user to provider with pending status
+      await storage.updateUser(req.user.id, {
+        role: 'provider',
+        status: 'pending',
+        businessName,
+        businessAddress,
+        businessPhone,
+        experienceYears,
+        skills,
+        isVerifiedProvider: false,
+      });
+
+      res.json({ message: "Provider application submitted successfully. You'll be notified once approved." });
+    } catch (error) {
+      console.error("Become provider error:", error);
+      res.status(500).json({ message: "Failed to submit provider application" });
+    }
+  });
+
   // Categories routes
   app.get("/api/categories", async (req, res) => {
     try {
