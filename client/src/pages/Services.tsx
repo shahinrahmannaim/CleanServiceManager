@@ -155,9 +155,9 @@ export default function Services() {
                   <SelectValue placeholder="Service Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectItem value="">All Categories</SelectItem>
                   {categories?.map((category: any) => (
-                    <SelectItem key={category.id} value={category.id.toString()}>
+                    <SelectItem key={category.id} value={category.name}>
                       {category.name}
                     </SelectItem>
                   ))}
@@ -190,7 +190,7 @@ export default function Services() {
             {selectedCategory && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 <Filter className="w-3 h-3" />
-                {categories?.find((cat: any) => cat.id.toString() === selectedCategory)?.name || 'Category'}
+                {selectedCategory}
               </Badge>
             )}
           </div>
