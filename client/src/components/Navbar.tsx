@@ -95,15 +95,20 @@ export default function Navbar() {
       </div>
 
       {/* Main Navigation */}
-      <nav className="bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 shadow-lg sticky top-0 z-50 border-b-2 border-red-500">
+      <nav 
+        className="shadow-lg sticky top-0 z-50 border-b-2 border-red-500"
+        style={{
+          background: `linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(239, 68, 68, 0.95) 100%)`
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-28">
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <img 
                 src="/panaroma-logo.png" 
                 alt="Panaroma Facilities Management" 
-                className="h-16 w-auto object-contain hover:scale-105 transition-transform duration-200"
+                className="h-24 w-auto object-contain hover:scale-105 transition-transform duration-200"
               />
             </Link>
 
