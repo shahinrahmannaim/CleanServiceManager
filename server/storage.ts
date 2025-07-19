@@ -209,7 +209,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getServicesByProvider(providerId: number): Promise<Service[]> {
-    return await db.select().from(services).where(eq(services.providerId, providerId));
+    return await db.select().from(services).where(eq(services.sellerId, providerId));
   }
 
   async createService(service: InsertService): Promise<Service> {
