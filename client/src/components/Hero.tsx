@@ -32,7 +32,7 @@ export default function Hero() {
     <section 
       className="relative text-white py-24 md:py-32"
       style={{
-        backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 58, 138, 0.8) 100%), url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`,
+        backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 1) 0%, rgba(30, 58, 138, 1) 100%), url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -59,11 +59,11 @@ export default function Hero() {
           </p>
           
           {/* Search Section */}
-          <div className="max-w-5xl mx-auto bg-white/10 rounded-2xl p-8 border border-white/20 shadow-2xl">
-            <h3 className="text-2xl font-semibold mb-6 text-white">Find Your Perfect Service</h3>
+          <div className="max-w-5xl mx-auto bg-white/90 rounded-2xl p-8 border border-white shadow-2xl">
+            <h3 className="text-2xl font-semibold mb-6 text-gray-900">Find Your Perfect Service</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-slate-200">
+                <label className="block text-sm font-medium text-gray-700">
                   Select City
                 </label>
                 <Select value={selectedCity} onValueChange={setSelectedCity}>
@@ -81,7 +81,7 @@ export default function Hero() {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-slate-200">
+                <label className="block text-sm font-medium text-gray-700">
                   Service Type
                 </label>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
