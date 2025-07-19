@@ -99,16 +99,12 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center">
               <img 
                 src="/panaroma-logo.png" 
                 alt="Panaroma Facilities Management" 
-                className="h-14 w-auto object-contain hover:scale-105 transition-transform duration-200"
+                className="h-20 w-auto object-contain hover:scale-105 transition-transform duration-200"
               />
-              <div className="hidden lg:block">
-                <h1 className="text-white font-bold text-xl tracking-wide">Panaroma</h1>
-                <p className="text-blue-200 text-sm">Facilities Management</p>
-              </div>
             </Link>
 
             {/* Desktop Navigation */}
