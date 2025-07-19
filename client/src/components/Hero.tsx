@@ -30,36 +30,30 @@ export default function Hero() {
 
   return (
     <section 
-      className="relative text-white py-24 md:py-32"
-      style={{
-        backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 1) 0%, rgba(30, 58, 138, 1) 100%), url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
+      className="relative text-gray-900 py-24 md:py-32 bg-gray-50"
     >
-      <div className="absolute inset-0 bg-[#79494f00]"></div>
+
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-4xl mx-auto">
           <div className="mb-6">
-            <span className="inline-block px-4 py-2 bg-blue-600/20 rounded-full text-sm font-medium border border-blue-400/30">
+            <span className="inline-block px-4 py-2 bg-blue-100 rounded-full text-sm font-medium text-blue-800 border border-blue-200">
               Qatar's Premier Facilities Management
             </span>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
             Excellence in
-            <span className="block text-transparent bg-gradient-to-r from-blue-200 to-white bg-clip-text">
+            <span className="block text-blue-600">
               Facilities Management
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl mb-12 text-slate-200 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl mb-12 text-gray-600 max-w-3xl mx-auto leading-relaxed">
             Professional cleaning and maintenance services across Qatar. Trusted by leading businesses and thousands of satisfied customers.
           </p>
           
           {/* Search Section */}
-          <div className="max-w-5xl mx-auto bg-white/90 rounded-2xl p-8 border border-white shadow-2xl">
+          <div className="max-w-5xl mx-auto bg-white rounded-2xl p-8 border border-gray-200 shadow-lg">
             <h3 className="text-2xl font-semibold mb-6 text-gray-900">Find Your Perfect Service</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
