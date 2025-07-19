@@ -68,9 +68,9 @@ export default function Login({ onSuccess }: LoginProps) {
       <div className="text-center mb-6">
         <div className="flex justify-center mb-4">
           <img 
-            src="/logo.jpeg" 
-            alt="Panaroma Cleaning Services" 
-            className="h-20 w-20 rounded-full object-cover shadow-lg border-4 border-blue-100"
+            src="/panaroma-logo.png" 
+            alt="Panaroma Facilities Management" 
+            className="w-[200px] h-[60px] object-contain"
           />
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>

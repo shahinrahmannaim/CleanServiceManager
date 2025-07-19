@@ -313,7 +313,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <img 
               src="/panaroma-logo.png" 
               alt="Panaroma Facilities Management" 
-              className="h-16 w-auto object-contain"
+              className="w-[260px] h-[75px] object-contain"
             />
           </div>
           <DialogTitle className="text-center">
