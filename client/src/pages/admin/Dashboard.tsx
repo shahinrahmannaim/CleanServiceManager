@@ -118,6 +118,7 @@ export default function AdminDashboard() {
     { title: 'Manage Users', href: '/admin/users', icon: Users, color: 'bg-blue-500' },
     { title: 'Manage Services', href: '/admin/services', icon: Settings, color: 'bg-green-500' },
     { title: 'View Categories', href: '/admin/categories', icon: Star, color: 'bg-purple-500' },
+    { title: 'Booking Schedule', href: '/admin/booking-schedule', icon: Calendar, color: 'bg-emerald-500' },
     { title: 'Seller Management', href: '/admin/sellers', icon: UserCheck, color: 'bg-indigo-500' },
     { title: 'Provider Applications', href: '/admin/providers', icon: UserCheck, color: 'bg-teal-500' },
     { title: 'Promotions', href: '/admin/promotions', icon: TrendingUp, color: 'bg-orange-500' },

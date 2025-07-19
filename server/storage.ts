@@ -242,7 +242,65 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllBookings(): Promise<Booking[]> {
-    return await db.select().from(bookings).orderBy(desc(bookings.createdAt));
+    const bookingsWithUser = await db
+      .select({
+        id: bookings.id,
+        userId: bookings.userId,
+        serviceId: bookings.serviceId,
+        employeeId: bookings.employeeId,
+        address: bookings.address,
+        city: bookings.city,
+        scheduledDate: bookings.scheduledDate,
+        status: bookings.status,
+        totalAmount: bookings.totalAmount,
+        notes: bookings.notes,
+        createdAt: bookings.createdAt,
+        updatedAt: bookings.updatedAt,
+        userName: users.name,
+        userEmail: users.email,
+        userMobile: users.mobile,
+        serviceName: services.name,
+        serviceDescription: services.description,
+        servicePrice: services.price,
+      })
+      .from(bookings)
+      .leftJoin(users, eq(bookings.userId, users.id))
+      .leftJoin(services, eq(bookings.serviceId, services.id))
+      .orderBy(desc(bookings.createdAt));
+
+    // Get employee data separately to avoid join conflicts
+    const enrichedBookings = await Promise.all(
+      bookingsWithUser.map(async (booking) => {
+        let employee = null;
+        if (booking.employeeId) {
+          const [emp] = await db.select().from(users).where(eq(users.id, booking.employeeId));
+          if (emp) {
+            employee = {
+              name: emp.name,
+              email: emp.email,
+              mobile: emp.mobile,
+            };
+          }
+        }
+
+        return {
+          ...booking,
+          user: {
+            name: booking.userName,
+            email: booking.userEmail,
+            mobile: booking.userMobile,
+          },
+          service: {
+            name: booking.serviceName,
+            description: booking.serviceDescription,
+            price: booking.servicePrice,
+          },
+          employee,
+        };
+      })
+    );
+
+    return enrichedBookings as any;
   }
 
   async getBookingsByUser(userId: number): Promise<Booking[]> {

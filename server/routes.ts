@@ -449,6 +449,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Auto-assign employee to booking
+  app.post("/api/bookings/:id/auto-assign", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      await chatbotService.assignBookingToEmployee(parseInt(id));
+      res.json({ message: "Employee auto-assigned successfully" });
+    } catch (error) {
+      console.error("Auto-assign error:", error);
+      res.status(500).json({ message: "Failed to auto-assign employee" });
+    }
+  });
+
+  // Get booking statistics
+  app.get("/api/bookings/stats", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const allBookings = await storage.getAllBookings();
+      const stats = {
+        totalBookings: allBookings.length,
+        pendingBookings: allBookings.filter(b => b.status === 'pending').length,
+        confirmedBookings: allBookings.filter(b => b.status === 'confirmed').length,
+        completedBookings: allBookings.filter(b => b.status === 'completed').length,
+        cancelledBookings: allBookings.filter(b => b.status === 'cancelled').length,
+        totalRevenue: allBookings
+          .filter(b => b.status === 'completed')
+          .reduce((sum, b) => sum + parseFloat(b.totalAmount || '0'), 0)
+          .toFixed(2)
+      };
+      res.json(stats);
+    } catch (error) {
+      console.error("Booking stats error:", error);
+      res.status(500).json({ message: "Failed to fetch booking statistics" });
+    }
+  });
+
   // Favorites routes
   app.get("/api/favorites", authenticate, async (req: AuthRequest, res) => {
     try {

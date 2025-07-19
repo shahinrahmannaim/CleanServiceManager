@@ -26,6 +26,7 @@ import AdminPromotions from "@/pages/admin/Promotions";
 import AdminPaymentMethods from "@/pages/admin/PaymentMethods";
 import AdminProviders from "@/pages/admin/Providers";
 import AdminSellers from "@/pages/admin/Sellers";
+import AdminBookingSchedule from "@/pages/admin/BookingSchedule";
 import EmployeeTimeTracker from "@/pages/employee/TimeTracker";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
@@ -118,6 +119,12 @@ function Router() {
       <Route path="/admin/sellers">
         <ProtectedRoute roles={['admin', 'superadmin']}>
           <AdminSellers />
+        </ProtectedRoute>
+      </Route>
+      
+      <Route path="/admin/booking-schedule">
+        <ProtectedRoute roles={['admin', 'superadmin']}>
+          <AdminBookingSchedule />
         </ProtectedRoute>
       </Route>
       
