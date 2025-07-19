@@ -107,15 +107,15 @@ export default function PromotionSection() {
                     </p>
                   )}
                   
-                  <div className="flex items-center justify-between">
+                  <div className="space-y-3">
                     <div className="flex items-center text-sm text-gray-500">
                       <Clock className="w-4 h-4 mr-1" />
                       <span>Until {formatDate(promotion.endDate)}</span>
                     </div>
                     
-                    <Link href="/services">
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                        Shop Now
+                    <Link href="/services" className="block">
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-2">
+                        Book Now
                         <ArrowRight className="w-4 h-4 ml-1" />
                       </Button>
                     </Link>
