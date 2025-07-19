@@ -588,19 +588,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/promotions", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
     try {
-      const promotion = await storage.createPromotion(req.body);
+      const promotionData = {
+        ...req.body,
+        startDate: new Date(req.body.startDate),
+        endDate: new Date(req.body.endDate),
+        discountPercentage: req.body.discountPercentage ? req.body.discountPercentage.toString() : null,
+        discountAmount: req.body.discountAmount ? req.body.discountAmount.toString() : null
+      };
+      const promotion = await storage.createPromotion(promotionData);
       res.status(201).json(promotion);
     } catch (error) {
-      res.status(500).json({ message: "Failed to create promotion" });
+      console.error('Error creating promotion:', error);
+      res.status(500).json({ message: "Failed to create promotion", error: error.message });
     }
   });
 
   app.put("/api/promotions/:id", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
     try {
-      const promotion = await storage.updatePromotion(parseInt(req.params.id), req.body);
+      const promotionData = {
+        ...req.body,
+        startDate: req.body.startDate ? new Date(req.body.startDate) : undefined,
+        endDate: req.body.endDate ? new Date(req.body.endDate) : undefined,
+        discountPercentage: req.body.discountPercentage ? req.body.discountPercentage.toString() : null,
+        discountAmount: req.body.discountAmount ? req.body.discountAmount.toString() : null
+      };
+      const promotion = await storage.updatePromotion(parseInt(req.params.id), promotionData);
       res.json(promotion);
     } catch (error) {
-      res.status(500).json({ message: "Failed to update promotion" });
+      console.error('Error updating promotion:', error);
+      res.status(500).json({ message: "Failed to update promotion", error: error.message });
     }
   });
 

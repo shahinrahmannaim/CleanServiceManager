@@ -62,11 +62,14 @@ export default function AdminPromotions() {
   const createPromotionMutation = useMutation({
     mutationFn: (data: z.infer<typeof promotionSchema>) => {
       const formattedData = {
-        ...data,
+        title: data.title,
+        description: data.description || null,
+        image: data.image || null,
         discountPercentage: data.discountPercentage ? parseFloat(data.discountPercentage) : null,
         discountAmount: data.discountAmount ? parseFloat(data.discountAmount) : null,
-        startDate: new Date(data.startDate).toISOString(),
-        endDate: new Date(data.endDate).toISOString(),
+        startDate: data.startDate,
+        endDate: data.endDate,
+        isActive: data.isActive
       };
       return apiRequest('POST', '/api/promotions', formattedData);
     },
@@ -92,11 +95,14 @@ export default function AdminPromotions() {
   const updatePromotionMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: z.infer<typeof promotionSchema> }) => {
       const formattedData = {
-        ...data,
+        title: data.title,
+        description: data.description || null,
+        image: data.image || null,
         discountPercentage: data.discountPercentage ? parseFloat(data.discountPercentage) : null,
         discountAmount: data.discountAmount ? parseFloat(data.discountAmount) : null,
-        startDate: new Date(data.startDate).toISOString(),
-        endDate: new Date(data.endDate).toISOString(),
+        startDate: data.startDate,
+        endDate: data.endDate,
+        isActive: data.isActive
       };
       return apiRequest('PUT', `/api/promotions/${id}`, formattedData);
     },
