@@ -279,7 +279,7 @@ export default function Home() {
               <Badge variant="outline" className="mb-4 text-blue-400 border-blue-400">
                 Get In Touch
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-blue-900">
                 Ready to Experience Excellence?
               </h2>
               <p className="text-xl mb-8 text-[#162e4a]">
