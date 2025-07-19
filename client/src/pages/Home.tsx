@@ -171,7 +171,7 @@ export default function Home() {
               </div>
 
               <Link href="/services">
-                <Button size="lg" className="bg-[#063580] hover:bg-blue-700 text-white">
+                <Button size="lg" className="bg-[#063580] hover:bg-[#063580]/90 text-white">
                   Get Started Today
                 </Button>
               </Link>
