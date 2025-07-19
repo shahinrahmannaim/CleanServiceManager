@@ -42,7 +42,7 @@ export default function AdminPromotions() {
   const queryClient = useQueryClient();
 
   const { data: promotions, isLoading } = useQuery({
-    queryKey: ['/api/promotions'],
+    queryKey: ['/api/promotions/all'],
   });
 
   const promotionForm = useForm<z.infer<typeof promotionSchema>>({
@@ -71,6 +71,7 @@ export default function AdminPromotions() {
       return apiRequest('POST', '/api/promotions', formattedData);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/promotions/all'] });
       queryClient.invalidateQueries({ queryKey: ['/api/promotions'] });
       setIsCreateModalOpen(false);
       promotionForm.reset();
@@ -100,6 +101,7 @@ export default function AdminPromotions() {
       return apiRequest('PUT', `/api/promotions/${id}`, formattedData);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/promotions/all'] });
       queryClient.invalidateQueries({ queryKey: ['/api/promotions'] });
       setIsEditModalOpen(false);
       setSelectedPromotion(null);
@@ -120,6 +122,7 @@ export default function AdminPromotions() {
   const deletePromotionMutation = useMutation({
     mutationFn: (id: number) => apiRequest('DELETE', `/api/promotions/${id}`),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/promotions/all'] });
       queryClient.invalidateQueries({ queryKey: ['/api/promotions'] });
       toast({
         title: "Promotion deleted",

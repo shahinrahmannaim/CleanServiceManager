@@ -565,12 +565,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/promotions/all", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const promotions = await storage.getAllPromotions();
+      res.json(promotions);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch all promotions" });
+    }
+  });
+
+  app.get("/api/promotions/:id", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const promotion = await storage.getPromotion(parseInt(req.params.id));
+      if (!promotion) {
+        return res.status(404).json({ message: "Promotion not found" });
+      }
+      res.json(promotion);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch promotion" });
+    }
+  });
+
   app.post("/api/promotions", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
     try {
       const promotion = await storage.createPromotion(req.body);
       res.status(201).json(promotion);
     } catch (error) {
       res.status(500).json({ message: "Failed to create promotion" });
+    }
+  });
+
+  app.put("/api/promotions/:id", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const promotion = await storage.updatePromotion(parseInt(req.params.id), req.body);
+      res.json(promotion);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update promotion" });
+    }
+  });
+
+  app.delete("/api/promotions/:id", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      await storage.deletePromotion(parseInt(req.params.id));
+      res.json({ message: "Promotion deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete promotion" });
     }
   });
 

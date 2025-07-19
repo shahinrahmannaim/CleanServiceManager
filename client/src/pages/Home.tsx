@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import Hero from '@/components/Hero';
 import ServiceCard from '@/components/ServiceCard';
+import PromotionSection from '@/components/PromotionSection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -74,6 +75,10 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Hero />
+      
+      {/* Promotion Section */}
+      <PromotionSection />
+      
       {/* Trust Indicators */}
       <section className="py-8 bg-slate-50 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
