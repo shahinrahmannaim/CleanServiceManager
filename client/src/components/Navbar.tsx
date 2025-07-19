@@ -117,9 +117,7 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-gray-700 font-medium transition-all duration-200 hover:text-gray-900 hover:scale-105 px-3 py-2 rounded-md ${
-                    location === item.href ? "text-gray-900 font-bold bg-gray-200/50 backdrop-blur-sm" : ""
-                  }`}
+                  className="transition-all duration-200 hover:text-gray-900 hover:scale-105 px-3 py-2 rounded-md text-gray-900 font-bold bg-gray-200/50 backdrop-blur-sm text-[20px]"
                 >
                   {item.label}
                 </Link>
