@@ -35,7 +35,7 @@ export default function Footer() {
               <img 
                 src="/panaroma-logo.png" 
                 alt="Panaroma Facilities Management" 
-                className="w-[260px] h-[75px] object-contain mr-4"
+                className="w-[280px] h-[85px] object-contain mr-4"
               />
             </div>
             <p className="text-gray-300 mb-4">
