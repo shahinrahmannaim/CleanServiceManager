@@ -324,12 +324,12 @@ export default function Home() {
                 <h3 className="text-2xl font-bold mb-6 text-blue-900">Get a Free Quote</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-[#161638]">Service Type</label>
-                    <select className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                      <option value="">Select a service</option>
-                      <option value="house-cleaning">House Cleaning</option>
-                      <option value="office-cleaning">Office Cleaning</option>
-                      <option value="commercial-cleaning">Commercial Cleaning</option>
+                    <label className="block text-sm font-medium mb-2 text-blue-900">Service Type</label>
+                    <select className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-blue-900 placeholder-blue-900/60 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                      <option value="" className="text-blue-900">Select a service</option>
+                      <option value="house-cleaning" className="text-blue-900">House Cleaning</option>
+                      <option value="office-cleaning" className="text-blue-900">Office Cleaning</option>
+                      <option value="commercial-cleaning" className="text-blue-900">Commercial Cleaning</option>
                     </select>
                   </div>
                   
