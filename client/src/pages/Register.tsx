@@ -225,7 +225,7 @@ export default function Register({ onSuccess }: RegisterProps) {
           <Button
             type="submit"
             disabled={registerMutation.isPending}
-            className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+            className="w-full h-10 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg"
           >
             {registerMutation.isPending ? "Creating Account..." : "Create Account"}
           </Button>

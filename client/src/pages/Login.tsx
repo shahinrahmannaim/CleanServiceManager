@@ -143,7 +143,7 @@ export default function Login({ onSuccess }: LoginProps) {
           <Button
             type="submit"
             disabled={loginMutation.isPending}
-            className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+            className="w-full h-10 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg"
           >
             {loginMutation.isPending ? "Signing in..." : "Sign In"}
           </Button>

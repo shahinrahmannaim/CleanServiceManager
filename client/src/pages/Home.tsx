@@ -138,7 +138,7 @@ export default function Home() {
           
           <div className="text-center mt-16">
             <Link href="/services">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg group">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-4 text-lg group">
                 Explore All Services
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
@@ -368,7 +368,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/services">
-              <Button size="lg" className="bg-white hover:bg-slate-100 text-blue-600 px-8 py-4 text-lg font-semibold group">
+              <Button size="lg" className="bg-white hover:bg-slate-100 text-primary px-8 py-4 text-lg font-semibold group">
                 Book a Service Now
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>

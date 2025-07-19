@@ -184,7 +184,7 @@ export default function Services() {
         </div>
         <Button
           onClick={() => setIsCreateModalOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          className="bg-primary hover:bg-primary/90 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Service
@@ -476,7 +476,7 @@ export default function Services() {
                 <Button
                   type="submit"
                   disabled={createServiceMutation.isPending}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-primary hover:bg-primary/90 text-white"
                 >
                   {createServiceMutation.isPending ? 'Creating...' : 'Create Service'}
                 </Button>

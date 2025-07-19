@@ -178,7 +178,7 @@ export default function Categories() {
         </div>
         <Button
           onClick={() => setIsCreateModalOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          className="bg-primary hover:bg-primary/90 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Category
@@ -379,7 +379,7 @@ export default function Categories() {
                 <Button
                   type="submit"
                   disabled={createCategoryMutation.isPending}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-primary hover:bg-primary/90 text-white"
                 >
                   {createCategoryMutation.isPending ? 'Creating...' : 'Create Category'}
                 </Button>

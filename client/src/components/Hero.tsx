@@ -103,7 +103,7 @@ export default function Hero() {
                 <Button
                   onClick={handleSearch}
                   size="lg"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold h-12 transition-all hover:scale-105"
+                  className="w-full bg-primary hover:bg-primary/90 text-white font-semibold h-12 transition-all hover:scale-105"
                 >
                   <Search className="mr-2 h-5 w-5" />
                   Search Services

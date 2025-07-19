@@ -106,7 +106,7 @@ export default function ForgotPassword() {
 
                   <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-red-500 hover:from-blue-700 hover:to-red-600 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl"
+                    className="w-full bg-gradient-to-r from-primary to-red-500 hover:from-primary/90 hover:to-red-600 text-white font-semibold py-3 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl"
                     disabled={forgotPasswordMutation.isPending}
                   >
                     {forgotPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}

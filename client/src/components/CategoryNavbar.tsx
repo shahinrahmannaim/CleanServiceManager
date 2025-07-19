@@ -19,8 +19,7 @@ import {
   Wind,
   Shield,
   Brush,
-  Vacuum,
-  Spray
+  Disc
 } from 'lucide-react';
 
 // Category icons mapping with diverse, category-specific icons
@@ -36,8 +35,8 @@ const categoryIcons: { [key: string]: any } = {
   'AC Cleaning': Wind,
   'Sanitization': Shield,
   'Painting Services': Brush,
-  'Upholstery Cleaning': Vacuum,
-  'Disinfection': Spray,
+  'Upholstery Cleaning': Disc,
+  'Disinfection': Droplets,
   'Test Category': Wrench,
 };
 
