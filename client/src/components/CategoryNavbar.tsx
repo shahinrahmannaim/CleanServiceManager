@@ -59,7 +59,7 @@ export default function CategoryNavbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-6">
           {/* Category Grid */}
-          <div className="flex items-center justify-center space-x-8 overflow-x-auto">
+          <div className="flex items-center justify-center space-x-8 overflow-x-auto lg:overflow-x-visible">
             {isLoading ? (
               <div className="flex space-x-8">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -93,14 +93,15 @@ export default function CategoryNavbar() {
                 </Link>
                 
                 {/* Category Items */}
-                {categories?.slice(0, 7).map((category: any) => {
+                {/* Show first 7 categories on mobile, all on desktop */}
+                {categories?.map((category: any, index: number) => {
                   const IconComponent = categoryIcons[category.name] || Sparkles;
                   const categorySlug = category.name.toLowerCase().replace(/\s+/g, '-');
                   const isActive = currentCategory === category.name;
                   
                   return (
                     <Link key={category.id} href={`/services/${categorySlug}`}>
-                      <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
+                      <div className={`flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px] ${index >= 7 ? 'hidden lg:flex' : ''}`}>
                         <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
                           isActive 
                             ? 'bg-red-600 text-white' 
@@ -120,15 +121,17 @@ export default function CategoryNavbar() {
                   );
                 })}
                 
-                {/* View More */}
-                <Link href="/services">
-                  <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                      <ArrowRight className="h-8 w-8 text-gray-600 group-hover:text-gray-800" />
+                {/* View More - only show on mobile */}
+                <div className="lg:hidden">
+                  <Link href="/services">
+                    <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                        <ArrowRight className="h-8 w-8 text-gray-600 group-hover:text-gray-800" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 group-hover:text-gray-800 text-center">View More</span>
                     </div>
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-800 text-center">View More</span>
-                  </div>
-                </Link>
+                  </Link>
+                </div>
               </>
             )}
           </div>
