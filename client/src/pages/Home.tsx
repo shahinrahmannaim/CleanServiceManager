@@ -350,7 +350,7 @@ export default function Home() {
                     />
                   </div>
                   
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg">
+                  <Button className="w-full bg-[#063580] hover:bg-[#063580]/90 text-white py-3 text-lg">
                     Get Free Quote
                   </Button>
                 </div>

@@ -33,9 +33,9 @@ export default function Footer() {
           <div>
             <div className="flex items-center mb-4">
               <img 
-                src="/panaroma-logo-final.png" 
+                src="/assets/panaromalogo_1752964145363.png" 
                 alt="Panaroma Facilities Management" 
-                className="w-[350px] h-[105px] object-contain mr-4"
+                className="w-[240px] h-[160px] object-contain"
               />
             </div>
             <p className="text-gray-300 mb-4">
