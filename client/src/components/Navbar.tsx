@@ -97,7 +97,7 @@ export default function Navbar() {
       <nav 
         className="shadow-lg sticky top-0 z-50 border-b-2 border-red-500 bg-[#f8fafc]"
         style={{
-          background: `linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(239, 68, 68, 0.95) 100%)`
+          background: `bg-[#f8fafc]`
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -107,7 +107,7 @@ export default function Navbar() {
               <img 
                 src="/panaroma-logo-final.png" 
                 alt="Panaroma Facilities Management" 
-                className="w-[450px] h-[120px] object-contain hover:scale-105 transition-transform duration-200"
+                className="w-[500px] h-[150px] object-contain hover:scale-105 transition-transform duration-200"
               />
             </Link>
 

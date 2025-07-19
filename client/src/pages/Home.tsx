@@ -324,7 +324,7 @@ export default function Home() {
                 <h3 className="text-2xl font-bold mb-6 text-blue-900">Get a Free Quote</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">Service Type</label>
+                    <label className="block text-sm font-medium mb-2 text-[#161638]">Service Type</label>
                     <select className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                       <option value="">Select a service</option>
                       <option value="house-cleaning">House Cleaning</option>
