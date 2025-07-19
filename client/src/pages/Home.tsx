@@ -337,7 +337,7 @@ export default function Home() {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-[#171f3d]">Contact Information</label>
+                    <label className="block text-sm font-medium mb-2 text-[#2c3a70]">Contact Information</label>
                     <input 
                       type="text" 
                       placeholder="Your Name"
