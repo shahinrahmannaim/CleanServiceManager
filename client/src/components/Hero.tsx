@@ -32,7 +32,7 @@ export default function Hero() {
     <section 
       className="relative text-white py-24 md:py-32"
       style={{
-        backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(30, 58, 138, 0.7) 100%), url('https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`,
+        backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 58, 138, 0.3) 100%), url('https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -59,7 +59,7 @@ export default function Hero() {
           </p>
           
           {/* Search Section */}
-          <div className="max-w-5xl mx-auto bg-white/10 rounded-2xl p-8 border border-white/20 shadow-2xl">
+          <div className="max-w-5xl mx-auto bg-white/20 backdrop-blur-none rounded-2xl p-8 border border-white/30 shadow-2xl">
             <h3 className="text-2xl font-semibold mb-6 text-white">Find Your Perfect Service</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
