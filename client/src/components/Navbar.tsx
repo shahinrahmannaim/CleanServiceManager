@@ -95,7 +95,7 @@ export default function Navbar() {
       </div>
       {/* Main Navigation */}
       <nav 
-        className="shadow-lg sticky top-0 z-50 border-b-2 border-red-500 bg-[#f8fafc]"
+        className="shadow-lg sticky top-0 z-50 border-b-2 border-red-500 bg-[#f9fafb]"
         style={{
           background: `linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(239, 68, 68, 0.95) 100%)`
         }}
