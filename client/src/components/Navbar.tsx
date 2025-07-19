@@ -148,11 +148,7 @@ export default function Navbar() {
                 </>
               )}
 
-              <Link href="/services">
-                <Button variant="ghost" size="sm" className="text-gray-700 hover:text-gray-900 hover:bg-gray-200/50">
-                  <Search className="h-4 w-4" />
-                </Button>
-              </Link>
+              
 
               {user ? (
                 <DropdownMenu>
