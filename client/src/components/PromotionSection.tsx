@@ -69,11 +69,11 @@ export default function PromotionSection() {
           </Badge>
         </div>
         
-        <div className="flex space-x-4 overflow-x-auto pb-4">
+        <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
           {promotions.map((promotion: Promotion) => (
             <Card 
               key={promotion.id} 
-              className="min-w-[300px] lg:min-w-[350px] bg-white shadow-lg hover:shadow-xl transition-shadow border-0 overflow-hidden"
+              className="flex-shrink-0 w-[300px] lg:w-[350px] bg-white shadow-lg hover:shadow-xl transition-shadow border-0 overflow-hidden"
             >
               <CardContent className="p-0">
                 <div className="relative">

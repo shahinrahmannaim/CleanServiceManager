@@ -341,12 +341,12 @@ export default function Home() {
                     <input 
                       type="text" 
                       placeholder="Your Name"
-                      className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-3"
+                      className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-blue-900 placeholder-white/60 focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-3"
                     />
                     <input 
                       type="tel" 
                       placeholder="Phone Number"
-                      className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-blue-900 placeholder-white/60 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   
