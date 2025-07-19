@@ -117,8 +117,8 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-white font-medium transition-all duration-200 hover:text-blue-200 hover:scale-105 px-3 py-2 rounded-md ${
-                    location === item.href ? "text-blue-200 font-bold bg-blue-800/50 backdrop-blur-sm" : ""
+                  className={`text-gray-700 font-medium transition-all duration-200 hover:text-gray-900 hover:scale-105 px-3 py-2 rounded-md ${
+                    location === item.href ? "text-gray-900 font-bold bg-gray-200/50 backdrop-blur-sm" : ""
                   }`}
                 >
                   {item.label}
@@ -131,12 +131,12 @@ export default function Navbar() {
               {user && (
                 <>
                   <Link href="/favorites">
-                    <Button variant="ghost" size="sm" className="text-white hover:text-blue-200 hover:bg-blue-800/50">
+                    <Button variant="ghost" size="sm" className="text-gray-700 hover:text-gray-900 hover:bg-gray-200/50">
                       <Heart className="h-4 w-4" />
                     </Button>
                   </Link>
                   <Link href="/cart">
-                    <Button variant="ghost" size="sm" className="relative text-white hover:text-blue-200 hover:bg-blue-800/50">
+                    <Button variant="ghost" size="sm" className="relative text-gray-700 hover:text-gray-900 hover:bg-gray-200/50">
                       <ShoppingCart className="h-4 w-4" />
                       {cartCount && cartCount.length > 0 && (
                         <span className="absolute -top-2 -right-2 bg-yellow-500 text-blue-900 text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
@@ -149,7 +149,7 @@ export default function Navbar() {
               )}
 
               <Link href="/services">
-                <Button variant="ghost" size="sm" className="text-white hover:text-blue-200 hover:bg-blue-800/50">
+                <Button variant="ghost" size="sm" className="text-gray-700 hover:text-gray-900 hover:bg-gray-200/50">
                   <Search className="h-4 w-4" />
                 </Button>
               </Link>
@@ -157,7 +157,7 @@ export default function Navbar() {
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center space-x-2 text-white hover:text-blue-200 hover:bg-blue-800/50">
+                    <Button variant="ghost" className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 hover:bg-gray-200/50">
                       <User className="h-5 w-5" />
                       <span>{user.name}</span>
                       <ChevronDown className="h-4 w-4" />
@@ -193,7 +193,7 @@ export default function Navbar() {
               ) : (
                 <Button 
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="bg-white text-blue-800 hover:bg-blue-50 border border-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+                  className="bg-white text-gray-700 hover:bg-gray-50 border border-gray-300 px-6 py-2 rounded-lg font-medium transition-colors duration-200"
                 >
                   Sign In
                 </Button>
@@ -206,7 +206,7 @@ export default function Navbar() {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:text-blue-200 hover:bg-blue-800/50"
+                className="text-gray-700 hover:text-gray-900 hover:bg-gray-200/50"
               >
                 {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
@@ -215,7 +215,7 @@ export default function Navbar() {
 
           {/* Mobile Navigation */}
           {isMobileMenuOpen && (
-            <div className="md:hidden bg-blue-800 border-t border-blue-700">
+            <div className="md:hidden bg-white border-t border-gray-200">
               <div className="px-2 pt-2 pb-3 space-y-1">
                 {navItems.map((item) => (
                   <Link
@@ -223,8 +223,8 @@ export default function Navbar() {
                     href={item.href}
                     className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                       location === item.href
-                        ? "text-blue-200 bg-blue-900/50 font-bold"
-                        : "text-white hover:text-blue-200 hover:bg-blue-700/50"
+                        ? "text-gray-900 bg-gray-200/50 font-bold"
+                        : "text-gray-700 hover:text-gray-900 hover:bg-gray-100/50"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -233,12 +233,12 @@ export default function Navbar() {
                 ))}
                 
                 {/* Mobile Auth Buttons */}
-                <div className="pt-4 border-t border-blue-700">
+                <div className="pt-4 border-t border-gray-200">
                   {user ? (
                     <div className="space-y-2">
                       <div className="flex items-center px-3 py-2">
-                        <User className="h-5 w-5 mr-2 text-white" />
-                        <span className="text-sm font-medium text-white">{user.name}</span>
+                        <User className="h-5 w-5 mr-2 text-gray-700" />
+                        <span className="text-sm font-medium text-gray-700">{user.name}</span>
                       </div>
                       <Button
                         onClick={() => {
@@ -246,7 +246,7 @@ export default function Navbar() {
                           setIsMobileMenuOpen(false);
                         }}
                         variant="ghost"
-                        className="w-full justify-start text-white hover:text-blue-200 hover:bg-blue-700/50"
+                        className="w-full justify-start text-gray-700 hover:text-gray-900 hover:bg-gray-100/50"
                       >
                         <User className="h-4 w-4 mr-2" />
                         Profile
@@ -257,7 +257,7 @@ export default function Navbar() {
                           setIsMobileMenuOpen(false);
                         }}
                         variant="ghost"
-                        className="w-full justify-start text-white hover:text-blue-200 hover:bg-blue-700/50"
+                        className="w-full justify-start text-gray-700 hover:text-gray-900 hover:bg-gray-100/50"
                       >
                         <User className="h-4 w-4 mr-2" />
                         My Bookings
@@ -270,7 +270,7 @@ export default function Navbar() {
                               setIsMobileMenuOpen(false);
                             }}
                             variant="ghost"
-                            className="w-full justify-start text-white hover:text-blue-200 hover:bg-blue-700/50"
+                            className="w-full justify-start text-gray-700 hover:text-gray-900 hover:bg-gray-100/50"
                           >
                             <Heart className="h-4 w-4 mr-2" />
                             Favorites
@@ -281,7 +281,7 @@ export default function Navbar() {
                               setIsMobileMenuOpen(false);
                             }}
                             variant="ghost"
-                            className="w-full justify-start text-white hover:text-blue-200 hover:bg-blue-700/50"
+                            className="w-full justify-start text-gray-700 hover:text-gray-900 hover:bg-gray-100/50"
                           >
                             <ShoppingCart className="h-4 w-4 mr-2" />
                             Cart {cartCount && cartCount.length > 0 && `(${cartCount.length})`}
@@ -294,7 +294,7 @@ export default function Navbar() {
                           setIsMobileMenuOpen(false);
                         }}
                         variant="ghost"
-                        className="w-full justify-start text-red-300 hover:text-red-200 hover:bg-blue-700/50"
+                        className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-gray-100/50"
                       >
                         <LogOut className="h-4 w-4 mr-2" />
                         Logout
@@ -306,7 +306,7 @@ export default function Navbar() {
                         setIsAuthModalOpen(true);
                         setIsMobileMenuOpen(false);
                       }}
-                      className="w-full bg-white text-blue-800 hover:bg-blue-50 py-2 rounded-lg font-medium"
+                      className="w-full bg-white text-gray-700 hover:bg-gray-50 border border-gray-300 py-2 rounded-lg font-medium"
                     >
                       Sign In
                     </Button>
