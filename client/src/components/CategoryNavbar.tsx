@@ -14,18 +14,30 @@ import {
   ArrowRight,
   Scissors,
   Zap,
-  Wrench
+  Wrench,
+  Waves,
+  Wind,
+  Shield,
+  Brush,
+  Vacuum,
+  Spray
 } from 'lucide-react';
 
-// Category icons mapping with better, more relevant icons
+// Category icons mapping with diverse, category-specific icons
 const categoryIcons: { [key: string]: any } = {
   'House Cleaning': Home,
   'Office Cleaning': Building2,
+  'Deep Cleaning': Zap,
   'Car Cleaning': Car,
   'Carpet Cleaning': Sofa,
   'Laundry Services': Shirt,
-  'Deep Cleaning': Zap,
   'Window Cleaning': Sparkles,
+  'Pool Cleaning': Waves,
+  'AC Cleaning': Wind,
+  'Sanitization': Shield,
+  'Painting Services': Brush,
+  'Upholstery Cleaning': Vacuum,
+  'Disinfection': Spray,
   'Test Category': Wrench,
 };
 
