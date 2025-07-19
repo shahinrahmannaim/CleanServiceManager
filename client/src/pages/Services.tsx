@@ -14,8 +14,8 @@ import { Search, Filter, MapPin } from 'lucide-react';
 export default function Services() {
   const [location] = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCity, setSelectedCity] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -33,8 +33,8 @@ export default function Services() {
       urlCategory = categorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     }
     
-    setSelectedCity(urlCity);
-    setSelectedCategory(urlCategory);
+    setSelectedCity(urlCity || 'all');
+    setSelectedCategory(urlCategory || 'all');
     setIsInitialized(true);
   }, [location]);
 
@@ -155,7 +155,7 @@ export default function Services() {
                   <SelectValue placeholder="Service Category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all">All Categories</SelectItem>
                   {categories?.map((category: any) => (
                     <SelectItem key={category.id} value={category.name}>
                       {category.name}
@@ -179,15 +179,15 @@ export default function Services() {
         </Card>
 
         {/* Active Filters */}
-        {(selectedCity || selectedCategory) && (
+        {((selectedCity && selectedCity !== 'all') || (selectedCategory && selectedCategory !== 'all')) && (
           <div className="mb-6 flex flex-wrap gap-2">
-            {selectedCity && (
+            {selectedCity && selectedCity !== 'all' && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
                 {selectedCity}
               </Badge>
             )}
-            {selectedCategory && (
+            {selectedCategory && selectedCategory !== 'all' && (
               <Badge variant="secondary" className="flex items-center gap-1">
                 <Filter className="w-3 h-3" />
                 {selectedCategory}
@@ -223,8 +223,8 @@ export default function Services() {
             <Button
               onClick={() => {
                 setSearchQuery('');
-                setSelectedCity('');
-                setSelectedCategory('');
+                setSelectedCity('all');
+                setSelectedCategory('all');
               }}
               className="mt-4"
               variant="outline"
