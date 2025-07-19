@@ -74,10 +74,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Hero />
-      
       {/* Promotion Section */}
       <PromotionSection />
+      
+      <Hero />
       
       {/* Trust Indicators */}
       <section className="py-8 bg-slate-50 border-b">
