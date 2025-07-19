@@ -32,7 +32,7 @@ export default function Hero() {
     <section 
       className="relative text-white py-24 md:py-32"
       style={{
-        backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 58, 138, 0.8) 100%), url('https://images.unsplash.com/photo-1559599101-f09722fb4948?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`,
+        backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 58, 138, 0.8) 100%), url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -42,7 +42,7 @@ export default function Hero() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-4xl mx-auto">
           <div className="mb-6">
-            <span className="inline-block px-4 py-2 bg-blue-600/20 backdrop-blur-sm rounded-full text-sm font-medium border border-blue-400/30">
+            <span className="inline-block px-4 py-2 bg-blue-600/20 rounded-full text-sm font-medium border border-blue-400/30">
               Qatar's Premier Facilities Management
             </span>
           </div>
@@ -59,7 +59,7 @@ export default function Hero() {
           </p>
           
           {/* Search Section */}
-          <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
+          <div className="max-w-5xl mx-auto bg-white/10 rounded-2xl p-8 border border-white/20 shadow-2xl">
             <h3 className="text-2xl font-semibold mb-6 text-white">Find Your Perfect Service</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
@@ -67,7 +67,7 @@ export default function Hero() {
                   Select City
                 </label>
                 <Select value={selectedCity} onValueChange={setSelectedCity}>
-                  <SelectTrigger className="w-full bg-white/90 backdrop-blur-sm text-gray-900 border-0 h-12">
+                  <SelectTrigger className="w-full bg-white/90 text-gray-900 border-0 h-12">
                     <SelectValue placeholder="Choose your city" />
                   </SelectTrigger>
                   <SelectContent>
@@ -85,7 +85,7 @@ export default function Hero() {
                   Service Type
                 </label>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-full bg-white/90 backdrop-blur-sm text-gray-900 border-0 h-12">
+                  <SelectTrigger className="w-full bg-white/90 text-gray-900 border-0 h-12">
                     <SelectValue placeholder="All Services" />
                   </SelectTrigger>
                   <SelectContent>
