@@ -1,9 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Link } from 'wouter';
-import { Percent, Clock, ArrowRight } from 'lucide-react';
+import { useQuery } from "@tanstack/react-query";
+import { ChevronRight, Percent } from "lucide-react";
+import { Link } from "wouter";
 
 interface Promotion {
   id: number;
@@ -24,17 +21,11 @@ export default function PromotionSection() {
 
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-r from-blue-50 to-red-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-4 overflow-x-auto">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="min-w-[300px] animate-pulse">
-                <div className="bg-gray-200 rounded-lg h-32" />
-              </div>
-            ))}
-          </div>
+      <section className="py-4">
+        <div className="container mx-auto px-4">
+          <div className="h-20 bg-gradient-to-r from-orange-400 to-orange-500 rounded-xl animate-pulse"></div>
         </div>
-      </div>
+      </section>
     );
   }
 
@@ -42,90 +33,67 @@ export default function PromotionSection() {
     return null;
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
-  const getDiscountText = (promotion: Promotion) => {
-    if (promotion.discountPercentage) {
-      return `${promotion.discountPercentage}% OFF`;
-    }
-    if (promotion.discountAmount) {
-      return `QAR ${promotion.discountAmount} OFF`;
-    }
-    return 'Special Offer';
-  };
+  // Get the best promotion (highest discount)
+  const bestPromotion = promotions.reduce((best: Promotion, current: Promotion) => {
+    const currentDiscount = current.discountPercentage ? parseFloat(current.discountPercentage) : 0;
+    const bestDiscount = best.discountPercentage ? parseFloat(best.discountPercentage) : 0;
+    return currentDiscount > bestDiscount ? current : best;
+  });
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-red-50 py-8 border-b">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Special Offers</h2>
-          <Badge variant="outline" className="text-blue-600 border-blue-600">
-            Limited Time
-          </Badge>
-        </div>
-        
-        <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
-          {promotions.map((promotion: Promotion) => (
-            <Card 
-              key={promotion.id} 
-              className="flex-shrink-0 w-[300px] lg:w-[350px] bg-white shadow-lg hover:shadow-xl transition-shadow border-0 overflow-hidden"
-            >
-              <CardContent className="p-0">
-                <div className="relative">
-                  {promotion.image ? (
-                    <img 
-                      src={promotion.image} 
-                      alt={promotion.title}
-                      className="w-full h-32 object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-32 bg-gradient-to-r from-blue-400 to-red-400 flex items-center justify-center">
-                      <Percent className="w-12 h-12 text-white" />
-                    </div>
-                  )}
-                  
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-red-500 text-white font-bold">
-                      {getDiscountText(promotion)}
-                    </Badge>
+    <section className="py-4">
+      <div className="container mx-auto px-4">
+        <Link href="/services">
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 hover:from-orange-500 hover:via-orange-600 hover:to-orange-700 transition-all duration-300 cursor-pointer group">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute right-0 top-0 w-32 h-32 bg-white rounded-full -translate-y-16 translate-x-16"></div>
+              <div className="absolute right-8 top-0 w-24 h-24 bg-white rounded-full -translate-y-12 translate-x-12"></div>
+              <div className="absolute right-16 bottom-0 w-40 h-40 bg-white rounded-full translate-y-20 translate-x-20"></div>
+            </div>
+            
+            {/* Large Percentage */}
+            <div className="absolute right-6 top-1/2 -translate-y-1/2 text-6xl md:text-8xl font-bold text-white/20">
+              {bestPromotion.discountPercentage}%
+            </div>
+            
+            <div className="relative z-10 flex items-center justify-between p-6 md:p-8">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-semibold text-white uppercase tracking-wide">
+                    Available
+                  </span>
+                  <div className="flex items-center gap-1 text-white">
+                    <Percent className="w-4 h-4" />
+                    <span className="text-sm font-medium">
+                      Up to {bestPromotion.discountPercentage}% off
+                    </span>
                   </div>
                 </div>
                 
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    {promotion.title}
-                  </h3>
-                  
-                  {promotion.description && (
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                      {promotion.description}
-                    </p>
-                  )}
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Clock className="w-4 h-4 mr-1" />
-                      <span>Until {formatDate(promotion.endDate)}</span>
-                    </div>
-                    
-                    <Link href="/services" className="block">
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-2">
-                        Book Now
-                        <ArrowRight className="w-4 h-4 ml-1" />
-                      </Button>
-                    </Link>
-                  </div>
+                <h2 className="text-white text-2xl md:text-3xl font-bold mb-2">
+                  Book now, save more on services
+                </h2>
+                
+                <p className="text-white/90 text-sm md:text-base mb-4">
+                  {bestPromotion.description || "Don't miss out on these limited-time promotions for our premium facilities management services"}
+                </p>
+                
+                <div className="flex items-center gap-2 text-white/80 text-xs">
+                  <span>Valid until {new Date(bestPromotion.endDate).toLocaleDateString()}</span>
+                  <span>•</span>
+                  <span>T&C apply</span>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              </div>
+              
+              <div className="flex items-center gap-2 text-white group-hover:translate-x-1 transition-transform duration-200">
+                <span className="hidden md:inline text-sm font-medium">Book Now</span>
+                <ChevronRight className="w-5 h-5" />
+              </div>
+            </div>
+          </div>
+        </Link>
       </div>
-    </div>
+    </section>
   );
 }
