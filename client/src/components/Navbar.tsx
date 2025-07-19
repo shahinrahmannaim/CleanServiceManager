@@ -103,7 +103,7 @@ export default function Navbar() {
               <img 
                 src="/panaroma-logo.png" 
                 alt="Panaroma Facilities Management" 
-                className="h-20 w-auto object-contain hover:scale-105 transition-transform duration-200"
+                className="h-16 w-auto object-contain hover:scale-105 transition-transform duration-200"
               />
             </Link>
 
