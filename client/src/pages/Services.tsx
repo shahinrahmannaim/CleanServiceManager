@@ -33,6 +33,7 @@ export default function Services() {
       urlCategory = categorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     }
     
+    // If no specific filters, reset to 'all' to show all services
     setSelectedCity(urlCity || 'all');
     setSelectedCategory(urlCategory || 'all');
     setIsInitialized(true);
@@ -42,7 +43,7 @@ export default function Services() {
     queryKey: ['/api/services', searchQuery, selectedCategory, selectedCity],
     queryFn: async () => {
       const params = new URLSearchParams();
-      if (searchQuery) params.set('search', searchQuery);
+      if (searchQuery && searchQuery.trim()) params.set('search', searchQuery);
       if (selectedCategory && selectedCategory !== 'all' && selectedCategory !== '') {
         params.set('categoryName', selectedCategory);
       }
@@ -50,7 +51,13 @@ export default function Services() {
         params.set('city', selectedCity);
       }
       
-      const response = await fetch(`/api/services?${params.toString()}`);
+      const url = `/api/services${params.toString() ? '?' + params.toString() : ''}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch services');
+      }
+      
       return response.json();
     },
     enabled: isInitialized, // Only run query after URL parameters are parsed
