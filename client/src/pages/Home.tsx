@@ -74,7 +74,6 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Hero />
-      
       {/* Trust Indicators */}
       <section className="py-8 bg-slate-50 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -98,7 +97,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Featured Services */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -145,7 +143,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Why Choose Us */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -200,9 +197,8 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <section className="py-20 from-blue-600 to-blue-800 text-white bg-[#f35f29]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -225,7 +221,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* Testimonials */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -276,9 +271,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-
-
       {/* Contact Section */}
       <section className="py-20 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -364,7 +356,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
