@@ -76,9 +76,7 @@ export default function Home() {
     <div className="min-h-screen">
       {/* Promotion Section */}
       <PromotionSection />
-      
       <Hero />
-      
       {/* Trust Indicators */}
       <section className="py-8 bg-slate-50 border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -339,7 +337,7 @@ export default function Home() {
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">Contact Information</label>
+                    <label className="block text-sm font-medium mb-2 text-[#171f3d]">Contact Information</label>
                     <input 
                       type="text" 
                       placeholder="Your Name"
