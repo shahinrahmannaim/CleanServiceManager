@@ -311,9 +311,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <DialogHeader>
           <div className="flex justify-center mb-3">
             <img 
-              src="/logo.jpeg" 
-              alt="Panaroma Cleaning Services" 
-              className="h-12 w-auto object-contain"
+              src="/panaroma-logo.png" 
+              alt="Panaroma Facilities Management" 
+              className="h-16 w-auto object-contain"
             />
           </div>
           <DialogTitle className="text-center">

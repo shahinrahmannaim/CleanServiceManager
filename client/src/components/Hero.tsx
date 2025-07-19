@@ -42,10 +42,10 @@ export default function Hero() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-shadow fade-in">
-            Professional Cleaning Services in Qatar
+            Excellence in Facilities Management
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-blue-100 fade-in">
-            Trusted by thousands of families across Doha and Al Rayyan
+            Professional cleaning and maintenance services across Qatar - Trusted by thousands
           </p>
           
           {/* Search Section */}

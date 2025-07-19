@@ -95,19 +95,19 @@ export default function Navbar() {
       </div>
 
       {/* Main Navigation */}
-      <nav className="bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 shadow-lg sticky top-0 z-50">
+      <nav className="bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 shadow-lg sticky top-0 z-50 border-b-2 border-red-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-3">
               <img 
-                src="/logo.svg" 
-                alt="Panaroma Cleaning Services" 
-                className="h-16 w-16 object-contain hover:scale-105 transition-transform duration-200"
+                src="/panaroma-logo.png" 
+                alt="Panaroma Facilities Management" 
+                className="h-14 w-auto object-contain hover:scale-105 transition-transform duration-200"
               />
               <div className="hidden lg:block">
                 <h1 className="text-white font-bold text-xl tracking-wide">Panaroma</h1>
-                <p className="text-blue-200 text-sm">Cleaning Services</p>
+                <p className="text-blue-200 text-sm">Facilities Management</p>
               </div>
             </Link>
 

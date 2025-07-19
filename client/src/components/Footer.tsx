@@ -33,18 +33,13 @@ export default function Footer() {
           <div>
             <div className="flex items-center mb-4">
               <img 
-                src="/logo.jpeg" 
-                alt="Panaroma Cleaning Services" 
-                className="h-16 w-16 rounded-full object-cover mr-4"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = "/logo.svg";
-                  target.className = "h-16 w-16 rounded-lg object-cover mr-4";
-                }}
+                src="/panaroma-logo.png" 
+                alt="Panaroma Facilities Management" 
+                className="h-16 w-auto object-contain mr-4"
               />
             </div>
             <p className="text-gray-300 mb-4">
-              Professional cleaning services across Qatar. Licensed, insured, and trusted by thousands.
+              Excellence in facilities management and cleaning services across Qatar. Licensed, insured, and trusted by thousands.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((link) => (
@@ -106,7 +101,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-300">
-          <p>&copy; {currentYear} Panaroma Cleaning Services. All rights reserved.</p>
+          <p>&copy; {currentYear} Panaroma Facilities Management. All rights reserved.</p>
         </div>
       </div>
     </footer>
