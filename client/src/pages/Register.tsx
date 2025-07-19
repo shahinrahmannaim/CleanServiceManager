@@ -77,7 +77,7 @@ export default function Register({ onSuccess }: RegisterProps) {
       <div className="text-center mb-6">
         <div className="flex justify-center mb-4">
           <img 
-            src="/panaroma-logo-new.png" 
+            src="/panaroma-logo-final.png" 
             alt="Panaroma Facilities Management" 
             className="w-[280px] h-[85px] object-contain"
           />
