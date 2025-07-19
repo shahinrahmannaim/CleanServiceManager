@@ -65,6 +65,9 @@ export const bookings = pgTable("bookings", {
   scheduledDate: timestamp("scheduled_date").notNull(),
   status: bookingStatusEnum("status").notNull().default("pending"),
   totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+  originalAmount: decimal("original_amount", { precision: 10, scale: 2 }).notNull().default("0.00"),
+  promotionId: integer("promotion_id").references(() => promotions.id),
+  discountAmount: decimal("discount_amount", { precision: 10, scale: 2 }).default("0.00"),
   notes: text("notes"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -141,6 +144,10 @@ export const invoices = pgTable("invoices", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const promotionsRelations = relations(promotions, ({ many }) => ({
+  bookings: many(bookings),
+}));
+
 export const otpCodes = pgTable("otp_codes", {
   id: serial("id").primaryKey(),
   identifier: text("identifier").notNull(), // email or mobile
@@ -216,6 +223,10 @@ export const bookingsRelations = relations(bookings, ({ one, many }) => ({
   employee: one(users, {
     fields: [bookings.employeeId],
     references: [users.id],
+  }),
+  promotion: one(promotions, {
+    fields: [bookings.promotionId],
+    references: [promotions.id],
   }),
   payments: many(payments),
   timeLogs: many(employeeTimeLogs),

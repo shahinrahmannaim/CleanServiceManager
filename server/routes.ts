@@ -10,6 +10,7 @@ import { sendOtp, verifyOtp } from "./services/otpService";
 import { sendWelcomeEmail } from "./services/emailService";
 import { chatbotService } from "./services/chatbotService";
 import { searchService } from "./services/searchService";
+import { findBestPromotion, runPromotionMaintenance } from "./promotionService";
 import { validateInput, secureUserRegistrationSchema, secureLoginSchema, secureBookingSchema, secureAddressSchema } from "./validation/inputValidation";
 import { insertUserSchema, insertServiceSchema, insertBookingSchema, insertCategorySchema, insertPromotionSchema, insertPaymentMethodSchema } from "@shared/schema";
 import { z } from "zod";
@@ -412,17 +413,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Service not found" });
       }
 
+      // Run promotion maintenance to clean up expired promotions
+      await runPromotionMaintenance();
+
+      // Find the best applicable promotion
+      const scheduledDate = new Date(req.body.scheduledDate);
+      const servicePrice = Number(service.price);
+      const promotionResult = await findBestPromotion(servicePrice, scheduledDate);
+
       const bookingData = {
         userId: req.user.id,
         serviceId: req.body.serviceId,
         address: req.body.address,
         city: req.body.city,
-        scheduledDate: new Date(req.body.scheduledDate),
-        totalAmount: service.price, // Use service price as total amount
+        scheduledDate: scheduledDate,
+        originalAmount: servicePrice.toString(),
+        totalAmount: promotionResult.finalAmount.toString(),
+        promotionId: promotionResult.promotionId,
+        discountAmount: promotionResult.discountAmount.toString(),
         notes: req.body.notes || null,
       };
 
       console.log("Creating booking with data:", bookingData);
+      if (promotionResult.appliedPromotion) {
+        console.log("Applied promotion:", promotionResult.appliedPromotion.title, 
+                   "- Discount:", promotionResult.discountAmount);
+      }
 
       const booking = await storage.createBooking(bookingData);
 
@@ -433,7 +449,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Error assigning booking to employee:", error);
       }
 
-      res.status(201).json(booking);
+      // Include promotion info in response
+      const bookingResponse = {
+        ...booking,
+        appliedPromotion: promotionResult.appliedPromotion || null
+      };
+
+      res.status(201).json(bookingResponse);
     } catch (error) {
       console.error("Booking creation error:", error);
       res.status(500).json({ message: "Failed to create booking" });
@@ -626,6 +648,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Promotion deleted successfully" });
     } catch (error) {
       res.status(500).json({ message: "Failed to delete promotion" });
+    }
+  });
+
+  // Promotion calculation endpoint
+  app.post("/api/promotions/calculate", authenticate, async (req: AuthRequest, res) => {
+    try {
+      const { serviceId, scheduledDate } = req.body;
+      
+      const service = await storage.getService(serviceId);
+      if (!service) {
+        return res.status(404).json({ message: "Service not found" });
+      }
+
+      const servicePrice = Number(service.price);
+      const bookingDate = new Date(scheduledDate);
+      const promotionResult = await findBestPromotion(servicePrice, bookingDate);
+
+      res.json(promotionResult);
+    } catch (error) {
+      console.error("Promotion calculation error:", error);
+      res.status(500).json({ message: "Failed to calculate promotion" });
+    }
+  });
+
+  // Promotion maintenance endpoint
+  app.post("/api/promotions/maintenance", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
+    try {
+      const result = await runPromotionMaintenance();
+      res.json({ 
+        message: "Promotion maintenance completed successfully",
+        ...result
+      });
+    } catch (error) {
+      console.error("Promotion maintenance error:", error);
+      res.status(500).json({ message: "Failed to run promotion maintenance" });
     }
   });
 
