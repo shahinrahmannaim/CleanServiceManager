@@ -105,7 +105,7 @@ export default function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <img 
-                src="/panaroma-logo.png" 
+                src="/panaroma-logo-new.png" 
                 alt="Panaroma Facilities Management" 
                 className="w-[450px] h-[120px] object-contain hover:scale-105 transition-transform duration-200"
               />
