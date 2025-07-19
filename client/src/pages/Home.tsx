@@ -282,7 +282,7 @@ export default function Home() {
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 Ready to Experience Excellence?
               </h2>
-              <p className="text-xl text-slate-300 mb-8">
+              <p className="text-xl mb-8 text-[#162e4a]">
                 Contact us today for a free consultation and discover why Qatar's leading businesses trust Panaroma with their facilities management needs.
               </p>
               
@@ -321,7 +321,7 @@ export default function Home() {
 
             <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
               <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-white mb-6">Get a Free Quote</h3>
+                <h3 className="text-2xl font-bold mb-6 text-[#263554]">Get a Free Quote</h3>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-white mb-2">Service Type</label>
