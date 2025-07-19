@@ -95,22 +95,20 @@ export default function Navbar() {
       </div>
 
       {/* Main Navigation */}
-      <nav className="bg-white shadow-md sticky top-0 z-50">
+      <nav className="bg-gradient-to-r from-blue-800 via-blue-700 to-blue-900 shadow-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center space-x-3">
               <img 
-                src="/logo.jpeg" 
+                src="/logo.svg" 
                 alt="Panaroma Cleaning Services" 
-                className="h-20 w-20 rounded-full object-cover"
-                onError={(e) => {
-                  // Fallback to SVG logo if JPEG fails
-                  const target = e.target as HTMLImageElement;
-                  target.src = "/logo.svg";
-                  target.className = "h-20 w-20 rounded-lg object-cover";
-                }}
+                className="h-16 w-16 object-contain hover:scale-105 transition-transform duration-200"
               />
+              <div className="hidden lg:block">
+                <h1 className="text-white font-bold text-xl tracking-wide">Panaroma</h1>
+                <p className="text-blue-200 text-sm">Cleaning Services</p>
+              </div>
             </Link>
 
             {/* Desktop Navigation */}
@@ -119,8 +117,8 @@ export default function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-gray-900 font-medium transition-colors duration-200 hover:text-blue-600 ${
-                    location === item.href ? "text-blue-600 font-bold" : ""
+                  className={`text-white font-medium transition-all duration-200 hover:text-blue-200 hover:scale-105 px-3 py-2 rounded-md ${
+                    location === item.href ? "text-blue-200 font-bold bg-blue-800/50 backdrop-blur-sm" : ""
                   }`}
                 >
                   {item.label}
@@ -133,15 +131,15 @@ export default function Navbar() {
               {user && (
                 <>
                   <Link href="/favorites">
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" className="text-white hover:text-blue-200 hover:bg-blue-800/50">
                       <Heart className="h-4 w-4" />
                     </Button>
                   </Link>
                   <Link href="/cart">
-                    <Button variant="ghost" size="sm" className="relative">
+                    <Button variant="ghost" size="sm" className="relative text-white hover:text-blue-200 hover:bg-blue-800/50">
                       <ShoppingCart className="h-4 w-4" />
                       {cartCount && cartCount.length > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        <span className="absolute -top-2 -right-2 bg-yellow-500 text-blue-900 text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                           {cartCount.length}
                         </span>
                       )}
@@ -151,7 +149,7 @@ export default function Navbar() {
               )}
 
               <Link href="/services">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="text-white hover:text-blue-200 hover:bg-blue-800/50">
                   <Search className="h-4 w-4" />
                 </Button>
               </Link>
@@ -159,7 +157,7 @@ export default function Navbar() {
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center space-x-2">
+                    <Button variant="ghost" className="flex items-center space-x-2 text-white hover:text-blue-200 hover:bg-blue-800/50">
                       <User className="h-5 w-5" />
                       <span>{user.name}</span>
                       <ChevronDown className="h-4 w-4" />
@@ -193,23 +191,12 @@ export default function Navbar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="flex items-center space-x-2">
-                      <User className="h-5 w-5" />
-                      <span>Account</span>
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setIsAuthModalOpen(true)}>
-                      Login
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setIsAuthModalOpen(true)}>
-                      Join Us
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Button 
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="bg-white text-blue-800 hover:bg-blue-50 border border-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+                >
+                  Sign In
+                </Button>
               )}
             </div>
 
@@ -219,7 +206,7 @@ export default function Navbar() {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 variant="ghost"
                 size="sm"
-                className="text-gray-900"
+                className="text-white hover:text-blue-200 hover:bg-blue-800/50"
               >
                 {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
@@ -228,7 +215,7 @@ export default function Navbar() {
 
           {/* Mobile Navigation */}
           {isMobileMenuOpen && (
-            <div className="md:hidden bg-white border-t border-gray-200">
+            <div className="md:hidden bg-blue-800 border-t border-blue-700">
               <div className="px-2 pt-2 pb-3 space-y-1">
                 {navItems.map((item) => (
                   <Link
@@ -236,8 +223,8 @@ export default function Navbar() {
                     href={item.href}
                     className={`block px-3 py-2 text-base font-medium rounded-md transition-colors duration-200 ${
                       location === item.href
-                        ? "text-blue-600 bg-blue-50 font-bold"
-                        : "text-gray-900 hover:text-blue-600 hover:bg-gray-50"
+                        ? "text-blue-200 bg-blue-900/50 font-bold"
+                        : "text-white hover:text-blue-200 hover:bg-blue-700/50"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -246,12 +233,12 @@ export default function Navbar() {
                 ))}
                 
                 {/* Mobile Auth Buttons */}
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4 border-t border-blue-700">
                   {user ? (
                     <div className="space-y-2">
                       <div className="flex items-center px-3 py-2">
-                        <User className="h-5 w-5 mr-2" />
-                        <span className="text-sm font-medium">{user.name}</span>
+                        <User className="h-5 w-5 mr-2 text-white" />
+                        <span className="text-sm font-medium text-white">{user.name}</span>
                       </div>
                       <Button
                         onClick={() => {
@@ -259,7 +246,7 @@ export default function Navbar() {
                           setIsMobileMenuOpen(false);
                         }}
                         variant="ghost"
-                        className="w-full justify-start text-gray-900 hover:text-blue-600"
+                        className="w-full justify-start text-white hover:text-blue-200 hover:bg-blue-700/50"
                       >
                         <User className="h-4 w-4 mr-2" />
                         Profile
@@ -270,7 +257,7 @@ export default function Navbar() {
                           setIsMobileMenuOpen(false);
                         }}
                         variant="ghost"
-                        className="w-full justify-start text-gray-900 hover:text-blue-600"
+                        className="w-full justify-start text-white hover:text-blue-200 hover:bg-blue-700/50"
                       >
                         <User className="h-4 w-4 mr-2" />
                         My Bookings
@@ -283,7 +270,7 @@ export default function Navbar() {
                               setIsMobileMenuOpen(false);
                             }}
                             variant="ghost"
-                            className="w-full justify-start text-gray-900 hover:text-blue-600"
+                            className="w-full justify-start text-white hover:text-blue-200 hover:bg-blue-700/50"
                           >
                             <Heart className="h-4 w-4 mr-2" />
                             Favorites
@@ -294,7 +281,7 @@ export default function Navbar() {
                               setIsMobileMenuOpen(false);
                             }}
                             variant="ghost"
-                            className="w-full justify-start text-gray-900 hover:text-blue-600"
+                            className="w-full justify-start text-white hover:text-blue-200 hover:bg-blue-700/50"
                           >
                             <ShoppingCart className="h-4 w-4 mr-2" />
                             Cart {cartCount && cartCount.length > 0 && `(${cartCount.length})`}
@@ -307,34 +294,22 @@ export default function Navbar() {
                           setIsMobileMenuOpen(false);
                         }}
                         variant="ghost"
-                        className="w-full justify-start text-red-600 hover:text-red-700"
+                        className="w-full justify-start text-red-300 hover:text-red-200 hover:bg-blue-700/50"
                       >
                         <LogOut className="h-4 w-4 mr-2" />
                         Logout
                       </Button>
                     </div>
                   ) : (
-                    <div className="space-y-2">
-                      <Button
-                        onClick={() => {
-                          setIsAuthModalOpen(true);
-                          setIsMobileMenuOpen(false);
-                        }}
-                        variant="ghost"
-                        className="w-full justify-start text-gray-900 hover:text-blue-600"
-                      >
-                        Login
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          setIsAuthModalOpen(true);
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                      >
-                        Join Us
-                      </Button>
-                    </div>
+                    <Button
+                      onClick={() => {
+                        setIsAuthModalOpen(true);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full bg-white text-blue-800 hover:bg-blue-50 py-2 rounded-lg font-medium"
+                    >
+                      Sign In
+                    </Button>
                   )}
                 </div>
               </div>
