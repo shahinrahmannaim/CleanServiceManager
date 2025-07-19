@@ -321,7 +321,7 @@ export default function Home() {
 
             <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
               <CardContent className="p-8">
-                <h3 className="text-2xl font-bold mb-6 text-[#263554]">Get a Free Quote</h3>
+                <h3 className="text-2xl font-bold mb-6 text-blue-900">Get a Free Quote</h3>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-white mb-2">Service Type</label>
