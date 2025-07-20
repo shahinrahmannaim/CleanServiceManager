@@ -163,7 +163,7 @@ export default function Services() {
     deleteServiceMutation.mutate(service.id);
   };
 
-  const filteredServices = services?.filter((service: any) => {
+  const filteredServices = (services as any[])?.filter((service: any) => {
     const matchesSearch = service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       service.description?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = !selectedCategory || selectedCategory === 'all' || service.categoryId.toString() === selectedCategory;
@@ -171,20 +171,20 @@ export default function Services() {
   }) || [];
 
   const getCategoryName = (categoryId: number) => {
-    const category = categories?.find((cat: any) => cat.id === categoryId);
+    const category = (categories as any[])?.find((cat: any) => cat.id === categoryId);
     return category?.name || 'Unknown';
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Services</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Services</h1>
           <p className="text-gray-600">Manage your service offerings</p>
         </div>
         <Button
           onClick={() => setIsCreateModalOpen(true)}
-          className="bg-primary hover:bg-primary/90 text-white"
+          className="bg-primary hover:bg-primary/90 text-white w-full sm:w-auto"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Service
@@ -193,8 +193,8 @@ export default function Services() {
 
       {/* Search and Filters */}
       <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center space-x-4">
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
               <Input
@@ -205,12 +205,12 @@ export default function Services() {
               />
             </div>
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="Filter by category" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                {categories?.map((category: any) => (
+                {(categories as any[])?.map((category: any) => (
                   <SelectItem key={category.id} value={category.id.toString()}>
                     {category.name}
                   </SelectItem>
@@ -223,11 +223,97 @@ export default function Services() {
 
       {/* Services Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Services ({filteredServices.length})</CardTitle>
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="text-lg sm:text-xl">Services ({filteredServices.length})</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
+        <CardContent className="px-0 sm:px-6">
+          {/* Mobile Card View */}
+          <div className="block sm:hidden space-y-3 px-4">
+            {isLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              </div>
+            ) : filteredServices.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                No services found
+              </div>
+            ) : (
+              filteredServices.map((service: any) => (
+                <Card key={service.id} className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-sm mb-1">{service.name}</h3>
+                      <p className="text-xs text-gray-600 mb-2">
+                        {service.description || 'No description'}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <Badge variant="outline" className="text-xs">
+                          {getCategoryName(service.categoryId)}
+                        </Badge>
+                        <div className="flex items-center text-xs text-green-600">
+                          <DollarSign className="w-3 h-3 mr-1" />
+                          <span className="font-medium">{service.price}</span>
+                        </div>
+                        <div className="flex items-center text-xs text-blue-600">
+                          <Clock className="w-3 h-3 mr-1" />
+                          <span>{service.duration} min</span>
+                        </div>
+                      </div>
+                      <Badge 
+                        variant={service.status === 'active' ? 'default' : 'secondary'}
+                        className={`text-xs ${service.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
+                      >
+                        {service.status}
+                      </Badge>
+                    </div>
+                    <div className="flex flex-col space-y-1 ml-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditService(service)}
+                        className="text-xs px-2 py-1"
+                      >
+                        <Edit className="w-3 h-3 mr-1" />
+                        Edit
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs px-2 py-1 text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-3 h-3 mr-1" />
+                            Delete
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the service.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => handleDeleteService(service)}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
+                </Card>
+              ))
+            )}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden sm:block overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
