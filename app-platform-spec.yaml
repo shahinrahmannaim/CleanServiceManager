@@ -1,13 +1,13 @@
 # DigitalOcean App Platform specification for Panaroma
 name: panaroma-cleaning-services
-region: nyc
+region: fra
 
 # Main web service
 services:
 - name: web
   source_dir: /
   github:
-    repo: your-username/panaroma-app
+    repo: shahinrahmannaim/CleanServiceManager
     branch: main
     deploy_on_push: true
   
@@ -38,20 +38,17 @@ services:
     value: production
   - key: JWT_SECRET
     type: SECRET
-    value: your-generated-jwt-secret
+    value: 7aLLoc7Apiu3HETpnm5bniajafHKEZNwztXIaEWRHbM=
   - key: SUPERADMIN_EMAIL
     value: admin@panaroma.qa
   - key: SUPERADMIN_PASSWORD
     type: SECRET
-    value: your-superadmin-password
+    value: SuperAdmin123!@#
   - key: ADMIN_EMAIL
     value: admin@panaroma.qa
   - key: ADMIN_PASSWORD
     type: SECRET
-    value: your-admin-password
-  - key: DATABASE_URL
-    type: SECRET
-    value: your-database-connection-string
+    value: Admin123!@#
 
 # Database (managed PostgreSQL)
 databases:
