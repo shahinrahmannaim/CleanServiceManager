@@ -68,18 +68,18 @@ export default function CategoryNavbar() {
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-[13px]">
-        <div className="py-6">
+        <div className="py-3">
           {/* Category Grid */}
-          <div className="flex items-center justify-center space-x-8 overflow-x-auto lg:overflow-x-visible">
+          <div className="flex items-center justify-center space-x-4 sm:space-x-6 overflow-x-auto lg:overflow-x-visible">
             {isLoading ? (
-              <div className="flex space-x-8">
+              <div className="flex space-x-4 sm:space-x-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div
                     key={i}
-                    className="flex flex-col items-center space-y-2 animate-pulse"
+                    className="flex flex-col items-center space-y-1 animate-pulse"
                   >
-                    <div className="w-16 h-16 bg-gray-200 rounded-full" />
-                    <div className="w-20 h-4 bg-gray-200 rounded" />
+                    <div className="w-12 h-12 bg-gray-200 rounded-full" />
+                    <div className="w-16 h-3 bg-gray-200 rounded" />
                   </div>
                 ))}
               </div>
@@ -87,15 +87,15 @@ export default function CategoryNavbar() {
               <>
                 {/* All Services */}
                 <Link href="/services">
-                  <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
-                    <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
+                  <div className="flex flex-col items-center space-y-1 cursor-pointer group min-w-[60px]">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
                       isAllServicesActive 
                         ? 'bg-blue-600 text-white' 
                         : 'bg-blue-100 text-blue-600 group-hover:bg-blue-200'
                     }`}>
-                      <Sparkles className="h-8 w-8" />
+                      <Sparkles className="h-6 w-6" />
                     </div>
-                    <span className={`text-sm font-medium text-center transition-colors ${
+                    <span className={`text-xs font-medium text-center transition-colors ${
                       isAllServicesActive 
                         ? 'text-blue-600' 
                         : 'text-gray-700 group-hover:text-blue-600'
@@ -112,15 +112,15 @@ export default function CategoryNavbar() {
                   
                   return (
                     <Link key={category.id} href={`/services/${categorySlug}`}>
-                      <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px] text-[13px]">
-                        <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
+                      <div className="flex flex-col items-center space-y-1 cursor-pointer group min-w-[60px] text-[11px]">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
                           isActive 
                             ? 'bg-red-600 text-white' 
                             : 'bg-gray-100 text-gray-600 group-hover:bg-red-100 group-hover:text-red-600'
                         }`}>
-                          <IconComponent className="h-8 w-8" />
+                          <IconComponent className="h-6 w-6" />
                         </div>
-                        <span className={`text-sm font-medium text-center max-w-[80px] leading-tight transition-colors ${
+                        <span className={`text-xs font-medium text-center max-w-[60px] leading-tight transition-colors ${
                           isActive 
                             ? 'text-red-600 font-semibold' 
                             : 'text-gray-700 group-hover:text-red-600'
