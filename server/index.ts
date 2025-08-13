@@ -8,17 +8,30 @@ async function initializeModules() {
     return {
       setupVite: viteModule.setupVite,
       serveStatic: viteModule.serveStatic,
-      log: viteModule.log,
     };
   } else {
     const prodModule = await import("./production.js");
     return {
       setupVite: null,
       serveStatic: prodModule.serveStatic,
-      log: prodModule.log,
     };
   }
 }
+
+// Simple logger function that works in all environments
+function createLogger() {
+  return (message: string, source = "express") => {
+    const formattedTime = new Date().toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+    console.log(`${formattedTime} [${source}] ${message}`);
+  };
+}
+
+const log = createLogger();
 
 const app = express();
 app.use(express.json());
@@ -56,7 +69,7 @@ app.use((req, res, next) => {
 
 (async () => {
   // Initialize modules based on environment
-  const { setupVite, serveStatic, log } = await initializeModules();
+  const { setupVite, serveStatic } = await initializeModules();
   
   const server = await registerRoutes(app);
   
@@ -75,8 +88,10 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
+  if (process.env.NODE_ENV === "development") {
+    if (setupVite) {
+      await setupVite(app, server);
+    }
   } else {
     serveStatic(app);
   }
