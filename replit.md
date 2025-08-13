@@ -63,3 +63,9 @@ Preferred communication style: Simple, everyday language.
 - **ESLint/Prettier**: For code quality
 - **Vite**: For fast development and builds
 - **PostCSS**: For CSS processing (with Tailwind CSS)
+
+### Deployment Infrastructure
+- **DigitalOcean**: Primary cloud hosting platform
+- **Docker**: Containerization for consistent deployments
+- **App Platform**: Managed hosting with auto-scaling
+- **Managed PostgreSQL**: Production database solution
