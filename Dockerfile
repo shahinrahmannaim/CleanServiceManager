@@ -17,8 +17,8 @@ COPY . .
 # Build frontend
 RUN npm run build
 
-# Copy built files to server/public directory
-RUN mkdir -p server/public && cp -r dist/* server/public/
+# Copy built files to server/public directory (correct path for static serving)
+RUN mkdir -p server/public && cp -r dist/public/* server/public/ || echo "Static files will be served from dist/public"
 
 # Set environment
 ENV NODE_ENV=production

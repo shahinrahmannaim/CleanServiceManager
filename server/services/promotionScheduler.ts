@@ -36,19 +36,56 @@ class PromotionScheduler {
   }
 
   /**
-   * Run promotion maintenance manually
+   * Run promotion maintenance manually with retry logic for serverless DB
    */
   private async runMaintenance(): Promise<void> {
-    try {
-      console.log('Running scheduled promotion maintenance...');
-      const result = await runPromotionMaintenance();
-      
-      if (result.expiredPromotions > 0 || result.cleanedBookings > 0) {
-        console.log(`Promotion maintenance completed: ${result.expiredPromotions} expired promotions, ${result.cleanedBookings} cleaned bookings`);
+    const maxRetries = 3;
+    let lastError;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`Running scheduled promotion maintenance (attempt ${attempt}/${maxRetries})...`);
+        const result = await runPromotionMaintenance();
+        
+        if (result.expiredPromotions > 0 || result.cleanedBookings > 0) {
+          console.log(`Promotion maintenance completed: ${result.expiredPromotions} expired promotions, ${result.cleanedBookings} cleaned bookings`);
+        } else {
+          console.log('Promotion maintenance completed: no changes needed');
+        }
+        
+        // Success - exit retry loop
+        return;
+        
+      } catch (error) {
+        lastError = error;
+        const err = error as Error;
+        
+        // Check if this is a database connection issue that might resolve with retry
+        if (err.message.includes('timeout') || 
+            err.message.includes('WebSocket') || 
+            err.message.includes('terminated') ||
+            err.message.includes('Connection') ||
+            err.message.includes('ECONNRESET')) {
+          
+          console.warn(`Promotion maintenance attempt ${attempt}/${maxRetries} failed: ${err.message}`);
+          
+          if (attempt < maxRetries) {
+            // Wait with exponential backoff before retry
+            const delay = 2000 * Math.pow(2, attempt - 1); // 2s, 4s, 8s
+            console.log(`Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+          }
+        }
+        
+        // For non-connection errors or final attempt, log and exit
+        console.error(`Promotion maintenance failed (final attempt): ${err.message}`);
+        break;
       }
-    } catch (error) {
-      console.error('Error during scheduled promotion maintenance:', error);
     }
+    
+    // Don't crash the app - just log the failure
+    console.error('Promotion maintenance failed after all retries, will try again next cycle');
   }
 }
 
