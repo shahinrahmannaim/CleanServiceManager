@@ -112,7 +112,7 @@ export default function CategoryNavbar() {
                   
                   return (
                     <Link key={category.id} href={`/services/${categorySlug}`}>
-                      <div className={`flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px] ${index >= 7 ? 'hidden lg:flex' : ''}`}>
+                      <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px] text-[13px]">
                         <div className={`w-16 h-16 rounded-full flex items-center justify-center transition-colors ${
                           isActive 
                             ? 'bg-red-600 text-white' 
