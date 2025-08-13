@@ -15,6 +15,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
 import { Search, Plus, Edit, Trash2, Tag, Calendar, Percent } from 'lucide-react';
+import AdminNavigation from '@/components/AdminNavigation';
 import { useToast } from '@/hooks/use-toast';
 
 const promotionSchema = z.object({
@@ -236,6 +237,9 @@ export default function AdminPromotions() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Admin Navigation */}
+        <AdminNavigation className="mb-6" />
+        
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>

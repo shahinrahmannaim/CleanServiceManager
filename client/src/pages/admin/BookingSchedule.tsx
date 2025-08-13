@@ -51,6 +51,7 @@ import {
   DollarSign,
   Activity
 } from 'lucide-react';
+import AdminNavigation from '@/components/AdminNavigation';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -281,6 +282,9 @@ export default function BookingSchedule() {
 
   return (
     <div className="space-y-6">
+      {/* Admin Navigation */}
+      <AdminNavigation />
+      
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>

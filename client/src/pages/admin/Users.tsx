@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, Search, Filter, Edit, Shield, Mail, Phone, Calendar, Plus } from 'lucide-react';
+import AdminNavigation from '@/components/AdminNavigation';
 import { useToast } from '@/hooks/use-toast';
 
 const userUpdateSchema = z.object({
@@ -141,6 +142,9 @@ export default function AdminUsers() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Admin Navigation */}
+        <AdminNavigation className="mb-6" />
+        
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">User Management</h1>
           <p className="text-gray-600">Manage user accounts and permissions</p>

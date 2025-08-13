@@ -30,6 +30,7 @@ import {
   Droplets,
   Sparkles
 } from 'lucide-react';
+import AdminNavigation from '@/components/AdminNavigation';
 
 const categorySchema = z.object({
   name: z.string().min(1, 'Category name is required'),
@@ -171,6 +172,9 @@ export default function Categories() {
 
   return (
     <div className="space-y-6 p-4 sm:p-6">
+      {/* Admin Navigation */}
+      <AdminNavigation />
+      
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Categories</h1>
