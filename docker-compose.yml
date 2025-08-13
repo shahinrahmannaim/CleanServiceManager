@@ -5,19 +5,30 @@ services:
     build: .
     ports:
       - "5000:5000"
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=${DATABASE_URL}
-      - JWT_SECRET=${JWT_SECRET}
-      - SUPERADMIN_EMAIL=${SUPERADMIN_EMAIL}
-      - SUPERADMIN_PASSWORD=${SUPERADMIN_PASSWORD}
-      - ADMIN_EMAIL=${ADMIN_EMAIL}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-      - SUPER_ADMIN_EMAIL=${SUPER_ADMIN_EMAIL}
-      - SUPER_ADMIN_PASSWORD=${SUPER_ADMIN_PASSWORD}
+    env_file:
+      - .env.production
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 60s
+    depends_on:
+      - db-setup
+    networks:
+      - panaroma-network
+
+  # Database setup service (runs once to initialize)
+  db-setup:
+    build: .
+    command: npm run db:push
+    env_file:
+      - .env.production
+    restart: "no"
+    networks:
+      - panaroma-network
+
+networks:
+  panaroma-network:
+    driver: bridge
