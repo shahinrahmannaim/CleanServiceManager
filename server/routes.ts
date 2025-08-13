@@ -381,10 +381,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/services/:id", authenticate, authorize(['admin', 'superadmin']), async (req: AuthRequest, res) => {
     try {
-      await storage.deleteService(parseInt(req.params.id));
+      const serviceId = parseInt(req.params.id);
+      console.log(`Attempting to delete service with ID: ${serviceId}`);
+      
+      // Check if service exists
+      const service = await storage.getService(serviceId);
+      if (!service) {
+        return res.status(404).json({ message: "Service not found" });
+      }
+      
+      // Check if service has existing bookings
+      const bookings = await storage.getAllBookings();
+      const serviceBookings = bookings.filter(b => b.serviceId === serviceId);
+      
+      if (serviceBookings.length > 0) {
+        return res.status(400).json({ 
+          message: "Cannot delete service with existing bookings. Please complete or cancel all related bookings first." 
+        });
+      }
+      
+      await storage.deleteService(serviceId);
+      console.log(`Service ${serviceId} deleted successfully`);
       res.json({ message: "Service deleted successfully" });
     } catch (error) {
-      res.status(500).json({ message: "Failed to delete service" });
+      console.error("Service deletion error:", error);
+      res.status(500).json({ 
+        message: "Failed to delete service", 
+        details: error instanceof Error ? error.message : "Unknown error" 
+      });
     }
   });
 
@@ -782,8 +806,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = parseInt(req.params.id);
       const { name, email, mobile, role, isVerifiedProvider, isEmailVerified, isMobileVerified } = req.body;
       
+      console.log("Update user request body:", req.body);
+      console.log("Update user ID:", userId);
+      
       // Validate required fields
       if (!name || !email || !mobile || !role) {
+        console.log("Missing required fields:", { name, email, mobile, role });
         return res.status(400).json({ message: "Name, email, mobile, and role are required" });
       }
       

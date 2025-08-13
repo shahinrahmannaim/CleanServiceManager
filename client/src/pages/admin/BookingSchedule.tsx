@@ -97,7 +97,8 @@ interface BookingStats {
 export default function BookingSchedule() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState('');
+  // Set default date filter to today's date
+  const [dateFilter, setDateFilter] = useState(new Date().toISOString().split('T')[0]);
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isEmployeeAssignOpen, setIsEmployeeAssignOpen] = useState(false);
@@ -266,6 +267,7 @@ export default function BookingSchedule() {
     
     const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
     
+    // Fix date filtering to properly handle today's bookings
     const matchesDate = !dateFilter || 
                        new Date(booking.scheduledDate).toISOString().split('T')[0] === dateFilter;
     
