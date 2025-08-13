@@ -1,31 +1,27 @@
-# Use Node.js 20 LTS
-FROM node:20-alpine
+# Simple deployment for DigitalOcean App Platform
+FROM node:18-alpine
 
-# Install system dependencies
-RUN apk add --no-cache curl python3 make g++
+# Install curl for health checks
+RUN apk add --no-cache curl
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files and install all dependencies
 COPY package*.json ./
-
-# Install dependencies including dev dependencies for build
 RUN npm ci
 
 # Copy source code
 COPY . .
 
-# Build the application
+# Build frontend
 RUN npm run build
 
-# Remove dev dependencies to reduce image size
-RUN npm ci --only=production && npm cache clean --force
+# Copy built files to server/public directory
+RUN mkdir -p server/public && cp -r dist/* server/public/
 
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S panaroma -u 1001
-USER panaroma
+# Set environment
+ENV NODE_ENV=production
 
 # Expose port
 EXPOSE 5000
@@ -34,5 +30,5 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:5000/api/health || exit 1
 
-# Start the application
+# Start application
 CMD ["npm", "start"]

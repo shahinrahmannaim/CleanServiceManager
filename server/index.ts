@@ -1,6 +1,24 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+
+// Function to initialize modules based on environment
+async function initializeModules() {
+  if (process.env.NODE_ENV === "development") {
+    const viteModule = await import("./vite.js");
+    return {
+      setupVite: viteModule.setupVite,
+      serveStatic: viteModule.serveStatic,
+      log: viteModule.log,
+    };
+  } else {
+    const prodModule = await import("./production.js");
+    return {
+      setupVite: null,
+      serveStatic: prodModule.serveStatic,
+      log: prodModule.log,
+    };
+  }
+}
 
 const app = express();
 app.use(express.json());
@@ -37,6 +55,9 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize modules based on environment
+  const { setupVite, serveStatic, log } = await initializeModules();
+  
   const server = await registerRoutes(app);
   
   // Start promotion scheduler for automatic maintenance
