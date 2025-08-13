@@ -16,6 +16,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Search, Plus, Edit, Trash2, CreditCard, Wallet, Building } from 'lucide-react';
+import AdminNavigation from '@/components/AdminNavigation';
 import { useToast } from '@/hooks/use-toast';
 
 const paymentMethodSchema = z.object({
@@ -179,6 +180,9 @@ export default function AdminPaymentMethods() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Admin Navigation */}
+        <AdminNavigation className="mb-6" />
+        
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>

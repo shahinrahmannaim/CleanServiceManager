@@ -107,7 +107,7 @@ export default function AdminUsers() {
     return isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
   };
 
-  const filteredUsers = users?.filter((user: any) => {
+  const filteredUsers = (users as any[])?.filter((user: any) => {
     const matchesSearch = !searchQuery || 
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||

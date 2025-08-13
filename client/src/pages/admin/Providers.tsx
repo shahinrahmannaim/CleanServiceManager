@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { User, CheckCircle, XCircle, Clock, Building, Phone, Mail, Award } from 'lucide-react';
+import AdminNavigation from '@/components/AdminNavigation';
 
 interface Provider {
   id: number;
@@ -87,6 +88,9 @@ export default function Providers() {
 
   return (
     <div className="space-y-6">
+      {/* Admin Navigation */}
+      <AdminNavigation />
+      
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Provider Applications</h1>

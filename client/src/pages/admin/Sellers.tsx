@@ -45,6 +45,7 @@ import {
   UserX,
   Clock
 } from 'lucide-react';
+import AdminNavigation from '@/components/AdminNavigation';
 
 interface Seller {
   id: number;
@@ -213,6 +214,9 @@ export default function Sellers() {
 
   return (
     <div className="space-y-6">
+      {/* Admin Navigation */}
+      <AdminNavigation />
+      
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
