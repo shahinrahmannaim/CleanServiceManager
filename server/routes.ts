@@ -1073,6 +1073,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Health check endpoint for deployment monitoring
+  app.get("/api/health", (req, res) => {
+    res.json({ 
+      status: "OK", 
+      timestamp: new Date().toISOString(),
+      version: "1.0.0",
+      environment: process.env.NODE_ENV || "development"
+    });
+  });
+
   const httpServer = createServer(app);
 
   // WebSocket server for real-time features

@@ -1,0 +1,14 @@
+node_modules
+.git
+.gitignore
+.env
+.replit
+attached_assets
+tests
+README.md
+cookies.txt
+admin_cookies.txt
+employee_cookies.txt
+*.log
+.DS_Store
+dist
