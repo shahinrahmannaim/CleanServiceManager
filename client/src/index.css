@@ -122,6 +122,303 @@
   .bg-accent {
     background-color: hsl(var(--accent));
   }
+
+  /* Panaroma Responsive Container System */
+  .panaroma-container {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  /* Mobile First - Default (xs: 0px+) */
+  .panaroma-container {
+    max-width: 100%;
+  }
+
+  /* Small devices (sm: 576px+) */
+  @media (min-width: 576px) {
+    .panaroma-container {
+      max-width: 540px;
+    }
+  }
+
+  /* Medium devices (md: 768px+) */
+  @media (min-width: 768px) {
+    .panaroma-container {
+      max-width: 720px;
+    }
+  }
+
+  /* Large devices (lg: 992px+) */
+  @media (min-width: 992px) {
+    .panaroma-container {
+      max-width: 960px;
+    }
+  }
+
+  /* Extra large devices (xl: 1200px+) */
+  @media (min-width: 1200px) {
+    .panaroma-container {
+      max-width: 1140px;
+    }
+  }
+
+  /* Panaroma Navigation Responsive Design */
+  .panaroma-navbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 64px;
+    padding: 0.5rem 1rem;
+  }
+
+  @media (min-width: 992px) {
+    .panaroma-navbar {
+      flex-wrap: nowrap;
+      min-height: 72px;
+      padding: 0.75rem 1.5rem;
+    }
+  }
+
+  /* Panaroma Section Heights */
+  .panaroma-hero {
+    min-height: calc(100vh - 64px);
+    display: flex;
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .panaroma-hero {
+      min-height: calc(100vh - 72px);
+    }
+  }
+
+  .panaroma-section {
+    padding: 3rem 0;
+  }
+
+  @media (min-width: 768px) {
+    .panaroma-section {
+      padding: 4rem 0;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .panaroma-section {
+      padding: 5rem 0;
+    }
+  }
+
+  /* Panaroma Card Heights */
+  .panaroma-card {
+    height: 100%;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 768px) {
+    .panaroma-card {
+      min-height: 250px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .panaroma-card {
+      min-height: 300px;
+    }
+  }
+
+  /* Panaroma Service Grid */
+  .panaroma-service-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 576px) {
+    .panaroma-service-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .panaroma-service-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .panaroma-service-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3rem;
+    }
+  }
+
+  /* Panaroma Button Responsive Sizes */
+  .panaroma-btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .panaroma-btn-md {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .panaroma-btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+  }
+
+  @media (min-width: 768px) {
+    .panaroma-btn-sm {
+      padding: 0.625rem 1.25rem;
+    }
+    
+    .panaroma-btn-md {
+      padding: 0.875rem 1.75rem;
+    }
+    
+    .panaroma-btn-lg {
+      padding: 1.125rem 2.25rem;
+    }
+  }
+
+  /* Panaroma Text Responsive Sizes */
+  .panaroma-text-hero {
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  @media (min-width: 768px) {
+    .panaroma-text-hero {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .panaroma-text-hero {
+      font-size: 3rem;
+    }
+  }
+
+  .panaroma-text-subtitle {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 768px) {
+    .panaroma-text-subtitle {
+      font-size: 1.125rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .panaroma-text-subtitle {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Panaroma Spacing System */
+  .panaroma-spacing-xs { margin: 0.5rem; }
+  .panaroma-spacing-sm { margin: 1rem; }
+  .panaroma-spacing-md { margin: 1.5rem; }
+  .panaroma-spacing-lg { margin: 2rem; }
+  .panaroma-spacing-xl { margin: 3rem; }
+
+  @media (min-width: 768px) {
+    .panaroma-spacing-xs { margin: 0.75rem; }
+    .panaroma-spacing-sm { margin: 1.25rem; }
+    .panaroma-spacing-md { margin: 2rem; }
+    .panaroma-spacing-lg { margin: 2.5rem; }
+    .panaroma-spacing-xl { margin: 4rem; }
+  }
+
+  /* Panaroma Logo Responsive Sizes */
+  .panaroma-logo-sm {
+    height: 32px;
+    width: auto;
+  }
+
+  .panaroma-logo-md {
+    height: 40px;
+    width: auto;
+  }
+
+  .panaroma-logo-lg {
+    height: 48px;
+    width: auto;
+  }
+
+  @media (min-width: 768px) {
+    .panaroma-logo-sm { height: 36px; }
+    .panaroma-logo-md { height: 44px; }
+    .panaroma-logo-lg { height: 52px; }
+  }
+
+  @media (min-width: 1200px) {
+    .panaroma-logo-sm { height: 40px; }
+    .panaroma-logo-md { height: 48px; }
+    .panaroma-logo-lg { height: 56px; }
+  }
+
+  /* Panaroma Form Responsive Design */
+  .panaroma-form-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .panaroma-form-container {
+      max-width: 500px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .panaroma-form-container {
+      max-width: 600px;
+    }
+  }
+
+  /* Panaroma Admin Dashboard Responsive */
+  .panaroma-dashboard-sidebar {
+    width: 250px;
+    min-height: calc(100vh - 64px);
+  }
+
+  @media (max-width: 992px) {
+    .panaroma-dashboard-sidebar {
+      width: 100%;
+      min-height: auto;
+    }
+  }
+
+  .panaroma-dashboard-content {
+    flex: 1;
+    min-height: calc(100vh - 64px);
+    padding: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .panaroma-dashboard-content {
+      padding: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .panaroma-dashboard-content {
+      padding: 2rem;
+    }
+  }
   
   .bg-secondary {
     background-color: hsl(var(--secondary));

@@ -94,20 +94,15 @@ export default function Navbar() {
         </div>
       </div>
       {/* Main Navigation */}
-      <nav 
-        className="shadow-lg sticky top-0 z-50 border-b-2 border-red-500 bg-[#f8fafc]"
-        style={{
-          background: `bg-[#f8fafc]`
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-28">
+      <nav className="panaroma-navbar shadow-lg sticky top-0 z-50 border-b-2 border-red-500 bg-[#f8fafc]">
+        <div className="panaroma-container">
+          <div className="flex justify-between items-center h-16 sm:h-20 md:h-24 lg:h-28">
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <img 
                 src="/panaroma-logo-final.png" 
                 alt="Panaroma Facilities Management" 
-                className="w-[500px] h-[150px] object-contain hover:scale-105 transition-transform duration-200"
+                className="h-10 sm:h-12 md:h-16 lg:h-20 xl:h-24 w-auto object-contain hover:scale-105 transition-transform duration-200"
               />
             </Link>
 

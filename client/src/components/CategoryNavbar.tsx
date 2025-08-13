@@ -67,8 +67,8 @@ export default function CategoryNavbar() {
 
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-[13px]">
-        <div className="py-3">
+      <div className="panaroma-container text-xs sm:text-sm">
+        <div className="py-2 sm:py-3">
           {/* Category Grid */}
           <div className="flex items-center justify-center space-x-4 sm:space-x-6 overflow-x-auto lg:overflow-x-visible">
             {isLoading ? (
@@ -87,13 +87,13 @@ export default function CategoryNavbar() {
               <>
                 {/* All Services */}
                 <Link href="/services">
-                  <div className="flex flex-col items-center space-y-1 cursor-pointer group min-w-[60px]">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                  <div className="flex flex-col items-center space-y-1 cursor-pointer group min-w-[50px] sm:min-w-[60px]">
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors ${
                       isAllServicesActive 
                         ? 'bg-blue-600 text-white' 
                         : 'bg-blue-100 text-blue-600 group-hover:bg-blue-200'
                     }`}>
-                      <Sparkles className="h-6 w-6" />
+                      <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
                     </div>
                     <span className={`text-xs font-medium text-center transition-colors ${
                       isAllServicesActive 
@@ -112,15 +112,15 @@ export default function CategoryNavbar() {
                   
                   return (
                     <Link key={category.id} href={`/services/${categorySlug}`}>
-                      <div className="flex flex-col items-center space-y-1 cursor-pointer group min-w-[60px] text-[11px]">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                      <div className="flex flex-col items-center space-y-1 cursor-pointer group min-w-[50px] sm:min-w-[60px]">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors ${
                           isActive 
                             ? 'bg-red-600 text-white' 
                             : 'bg-gray-100 text-gray-600 group-hover:bg-red-100 group-hover:text-red-600'
                         }`}>
-                          <IconComponent className="h-6 w-6" />
+                          <IconComponent className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
                         </div>
-                        <span className={`text-xs font-medium text-center max-w-[60px] leading-tight transition-colors ${
+                        <span className={`text-xs font-medium text-center max-w-[50px] sm:max-w-[60px] leading-tight transition-colors ${
                           isActive 
                             ? 'text-red-600 font-semibold' 
                             : 'text-gray-700 group-hover:text-red-600'
@@ -135,11 +135,11 @@ export default function CategoryNavbar() {
                 {/* View More - only show on mobile */}
                 <div className="lg:hidden">
                   <Link href="/services">
-                    <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[80px]">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                        <ArrowRight className="h-8 w-8 text-gray-600 group-hover:text-gray-800" />
+                    <div className="flex flex-col items-center space-y-2 cursor-pointer group min-w-[70px] sm:min-w-[80px]">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                        <ArrowRight className="h-6 w-6 sm:h-8 sm:w-8 text-gray-600 group-hover:text-gray-800" />
                       </div>
-                      <span className="text-sm font-medium text-gray-700 group-hover:text-gray-800 text-center">View More</span>
+                      <span className="text-xs sm:text-sm font-medium text-gray-700 group-hover:text-gray-800 text-center">View More</span>
                     </div>
                   </Link>
                 </div>
