@@ -67,7 +67,7 @@ export default function CategoryNavbar() {
 
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-[13px]">
         <div className="py-6">
           {/* Category Grid */}
           <div className="flex items-center justify-center space-x-8 overflow-x-auto lg:overflow-x-visible">
